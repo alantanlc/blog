@@ -1,5 +1,5 @@
 
-# How to write JUnit tests using @InjectMocks and @Mocks
+# How to write JUnit tests using @InjectMocks and @Mock
 
 ## Steps
 
@@ -26,7 +26,10 @@ public class Store() {
   }
 
   public List<Cashier> getMaleCashiers() throws CacheException {
+    // Get list of cashiers from cache or database
     List<Cashier> cashierList = cashierService.getByStoreId(this.id);
+    
+    // Return male cashiers
     return cashierList.stream().filter(c -> c.getGender().equalsIgnoreCase('male')).collect(Collectors.toList()));
   }
 }
@@ -51,7 +54,7 @@ We declare the member variables Store and CashierServiceImpl in the test class.
 
 By annotating 'store' with @InjectMocks and cashierServiceImpl with @Mock, store will have a mock instance of cashierServiceImpl when store is initialized instead of being null.
 
-Finally, we also need to call 'MockitAnnotations.initMocks(this);' to initialize the mock variables before the tests are run. One way to do this is by calling initMocks() in a method (e.g. initMocks()) annotated with @Before:
+Finally, we also need to call 'MockitAnnotations.initMocks(this)' to initialize the mock variables before the tests are run. One way to do this is by calling initMocks() in a method annotated with @Before (e.g. initMocks()):
 
 ```java
 /* test/StoreTest.java */
@@ -74,6 +77,22 @@ public class StoreTest() {
 
 ### Write the JUnit test method
 
+Let's now write the test for the getMaleCashiers() method.
+
+```java
+  public List<Cashier> getMaleCashiers() throws CacheException {
+    // Get list of cashiers from cache or database
+    List<Cashier> cashierList = cashierService.getByStoreId(this.id);
+    
+    // Return male cashiers
+    return cashierList.stream().filter(c -> c.getGender().equalsIgnoreCase(‘male’)).collect(Collectors.toList()));
+  }
+```
+
+To elaborate, cashierService.getByStoreId(this.id) retrieves the list of cashiers associated with the given store id from either the cache or database. For our test, neither do we care about the implementation of getByStoreId(), nor do we need this method to retrieve the result from an actual cache or database. As such, we can use 'when' and 'thenReturn' to mock the result when this method is being called when the test is running.
+
+What we _are_ concerned about is the line after that filters the result by male cashiers and returns the correct result.
+
 ```java
 /* test/StoreTest.java */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -82,7 +101,7 @@ public class StoreTest() {
   //...
   
   @Test
-  public void getMaleCashiersTest() throws Cache exception {
+  public void getMaleCashiersTest_shouldReturnSizeOne() throws Cache exception {
     // CashierList with one male and one female cashier
     List<Cashier> cashierList = new ArrayList<>();
     
@@ -129,6 +148,7 @@ public void StoreTest() {
 ```
 
 The issue with manually initializing is that you may not be able to initialize the private member variables of `Store`:
+
 1. `Store` does not take in an instance of `CashierServiceImpl` in its constructor
 1. `CashierServiceImpl` is a private member variable which was initialized by Spring's dependency injection using `@Autowired`
 1. As such, there is no way of initializing `CashierServiceImpl` manually in order to test the `getCashiers()` method as `CashierServiceImpl` is null
