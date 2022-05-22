@@ -1,5 +1,5 @@
 
-# How to write JUnit tests using @InjectMocks and @Mock
+# How to write Spring JUnit tests using @InjectMocks and @Mock
 
 ## Steps
 
