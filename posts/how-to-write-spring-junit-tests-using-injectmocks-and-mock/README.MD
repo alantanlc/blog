@@ -9,7 +9,7 @@
 
 ## Create the test file
 
-Consider a new class `Store.java` that and we want to test the `getMaleCashiers()` method:
+Consider a new class `Store.java` and we want to test the `getMaleCashiers()` method:
 
 ```java
 /* Store.java */
@@ -25,10 +25,10 @@ public class Store() {
   }
 
   public List<Cashier> getMaleCashiers() throws CacheException {
-    // Get list of cashiers from cache or database
+    // Get list of cashiers by store id from cache or database
     List<Cashier> cashierList = cashierService.getByStoreId(this.id);
     
-    // Return male cashiers
+    // Filter and return list of male cashiers
     return cashierList
       .stream()
       .filter(c -> c.getGender().equalsIgnoreCase('male'))
@@ -88,7 +88,7 @@ public class Store {
   // ...
 
   public List<Cashier> getMaleCashiers() throws CacheException {
-    // Get list of cashiers from cache or database
+    // Get list of cashiers by store id from cache or database
     List<Cashier> cashierList = cashierService.getByStoreId(this.id);
     
     // Return male cashiers
@@ -101,15 +101,17 @@ public class Store {
 }
 ```
 
-`cashier.getByStoreId(this.id)` retrieves the list of cashiers associated with the given store id from either the cache or database.
+`cashierService.getByStoreId(this.id)` retrieves the list of cashiers associated with the given store id from either the cache or database.
 
-For our test on `store.getMaleCashers()`, we are not concerned with:
-1. the underlying implementation of `cashier.getByStoreId(this.id)`
-1. `cashier.getBtStoreId(this.id)` does not need to retrieve the result from an actual cache or database.
+For our test on `store.getMaleCashers()`:
+1. we are not concerned with the underlying implementation of `cashierService.getByStoreId(this.id)`
+1. `cashierService.getByStoreId(this.id)` does not need to retrieve the result from an actual cache or database when we run the test
 
-As such, we can use Mockito's `when` and `thenReturn` methods to mock the result when `cashier.getByStoreId(this.id)` is being called during testing.
+As such, we can use Mockito's `when` and `thenReturn` methods to mock the result when `cashierService.getByStoreId(this.id)` is being called during testing.
 
 What we _are_ concerned with is the following line that filters `cashierList` by male cashiers and returns the correct result.
+
+As such, here we have the complete code for our test:
 
 ```java
 /* StoreTest.java */
