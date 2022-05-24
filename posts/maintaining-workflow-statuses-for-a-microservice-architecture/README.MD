@@ -36,7 +36,7 @@ Perhaps a simple solution is to maintain a `STATUS` column in the `APPLICATION_D
 
 ```sql
 CREATE TABLE APPLICATION_DETAIL (
-  APPLICATION_ID    INT PRIMARY KEY NOT NULL,
+  ID                INT PRIMARY KEY NOT NULL,
   FIRST_NAME        CHAR(100),
   LAST_NAME         CHAR(100),
   POSITION          CHAR(100),
@@ -66,7 +66,7 @@ We quickly observe that this would not work well for our job application system 
 Using a table to maintain the statuses of all your microservices:
 ```sql
 CREATE TABLE APPLICATION_STATUS (
-  APPLICATION_ID                INT FOREIGN KEY NOT NULL, 
+  ID                            INT FOREIGN KEY NOT NULL, 
   PHONE_SCREEN_STATUS           CHAR(50),
   ON_SITE_INTERVIEW_STATUS      CHAR(50),
   BACKGROUND_CHECK_STATUS       CHAR(50),
