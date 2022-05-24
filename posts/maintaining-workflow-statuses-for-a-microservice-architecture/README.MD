@@ -49,7 +49,7 @@ CREATE TABLE APPLICATION_DETAIL (
 | 1 | PETER | PARKER | SOFTWARE ENGINEER | SUBMISSION |
 | 2 | MARY | JANE | RECRUITER | PHONE_SCREEN |
 | 3 | HARRY | OSBORN | SITE RELIABILITY ENGINEER | ON_SITE_INTERVIEW |
-| 4 | GWEN | STACY | ENGINERING MANAGER | ACCEPTED |
+| 4 | GWEN | STACY | ENGINERING MANAGER | OFFER |
 
 This solution may work alright if:
 1. Each task do not need sub-statuses (e.g. Pending, Passed, Failed)
@@ -63,7 +63,7 @@ We quickly observe that this would not work well for our job application system 
 
 ## The Proposed Solution: Data Model For Statuses
 
-Using a table to maintain the statuses of all your microservices:
+Use `STATUS` table to maintain the statuses of all your microservices:
 ```sql
 CREATE TABLE APPLICATION_STATUS (
   ID                            INT FOREIGN KEY NOT NULL, 
@@ -75,9 +75,11 @@ CREATE TABLE APPLICATION_STATUS (
 );
 ```
 
-| ID | PHONE_SCREEN_STATUS | ON_SITE_INTERVIEW_STATUS | BACKGROUND_CHECK_STATUS | HEALTH_SCREENING_STATUS | OFFER_STATUS |
-| - | - | - | - | - | - |
-| 1 | PENDING |  | | | PENDING |
-| 2 | COMPLETED | COMPLETED | PENDING | PENDING | |
-| 3 | COMPLETED | COMPLETED | FAILED | CANCELLED | NO_OFFER |
-| 4 | COMPLETED | COMPLETED | COMPLETED | COMPLETED | ACCEPTED |
+| ID | APPLICATION_SERVICE | PHONE_SCREEN_STATUS | ON_SITE_INTERVIEW_STATUS | BACKGROUND_CHECK_STATUS | HEALTH_SCREENING_STATUS | OFFER_STATUS |
+| - | - | - | - | - | - | - |
+| 1 | DRAFT | | | | | |
+| 2 | SUBMITTED | PENDING |  | | | |
+| 3 | SUBMITTED | PASSED | PASSED | PENDING | PENDING | |
+| 4 | SUBMITTED | PASSED | PASSED | PENDING | PENDING | |
+| 5 | SUBMITTED | PASSED | PASSED | FAILED | CANCELLED | NO_OFFER |
+| 6 | SUBMITTED | PASSED | PASSED | PASSED | PASSED | ACCEPTED |
