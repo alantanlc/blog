@@ -1,13 +1,13 @@
 
-# Scalable classes using Spring `@Components` and `@Autowired`
+# Scalable classes using Spring `@Component` and `@Autowired`
 
-In this article, we will show you how to write a scalable abstract class using Spring `@Components` and `@Autowired`.
+In this article, we will show you how to write a scalable abstract class using Spring `@Component` and `@Autowired`.
 
 ## Overview
 
-1. Abstract Payment Processor
-1. Country-specific Payment Processors
-1. Use hashmap to store and retrieve country-specific payment processors
+1. Abstract Payment Processor using `@Component`
+1. Country-specific Payment Processors using `@Component`
+1. Use `@Autowired` hashmap to store and retrieve country-specific payment processors
 1. Payment RestController
 
 ## Abstract Payment Processor
