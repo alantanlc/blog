@@ -23,12 +23,13 @@ For example, the set of tasks for a job application workflow may look like this:
 In addition: #4 and #5 can be done in parallel.
 
 Given the set of tasks, we may then have a set of microservices like this:
+![architecture](./architecture.png)
 1. __ApplicationService__: Processes applications and notifies PhoneScreenService when initiated by HR
 1. __PhoneScreenService__: Schedules phone screen sessions and notifies OnSiteInterviewService if passed
 1. __OnSiteInterviewService__: Schedules on-site interviews and notifies BackgroundCheckService and HealthScreeningService if passed
 1. __BackgroundCheckService__: Performs background checks on applicant
 1. __HealthScreeningService__: Initiates health screening session for applicant
-1. __OfferService__: Initiates offer to applicant if Background Check and Health Screening passed
+1. __OfferService__: Initiates offer to applicant after both background check and health screening are passed
 
 ## Simple (but not ideal) solution
 
