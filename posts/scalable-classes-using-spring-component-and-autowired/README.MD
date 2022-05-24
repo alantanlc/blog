@@ -5,12 +5,12 @@ In this article, we will show you how to write a scalable abstract class using S
 
 ## Overview
 
-1. Abstract Payment Processor using `@Component`
+1. Abstract PaymentProcessor using `@Component`
 1. Country-specific Payment Processors using `@Component`
-1. Use `@Autowired` hashmap to store and retrieve country-specific payment processors
+1. Use `@Autowired` HashMap to store and retrieve country-specific PaymentProcessors
 1. Payment RestController
 
-## Abstract Payment Processor
+## Abstract PaymentProcessor using `@Component`
 
 ```java
 @Component
@@ -29,7 +29,7 @@ public abstract class PaymentProcessor {
 }
 ```
 
-## Country-specific Payment Processors
+## Country-specific PaymentProcessors using `@Component`
 
 ```java
 /* SgpPaymentProcessor.java */
@@ -57,7 +57,7 @@ public class MyPaymentProcessor extends PaymentProcessor {
 }
 ```
 
-## Use hashmap to store and retrieve country-specific payment processors
+## Use `@Autowired` HashMap to store and retrieve country-specific PaymentProcessors
 
 ```java
 /* ProcessPaymentAction.java */
