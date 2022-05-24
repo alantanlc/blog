@@ -6,7 +6,6 @@
 1. The Event-Driven Microservice Architecture
 1. Simple (but not ideal) solution
 1. The Proposed Solution: Data Model For Statuses
-1. Maintaining Consistency In Status Updates
 
 ## The Event-Driven Microservice Architecture
 
@@ -40,9 +39,17 @@ CREATE TABLE APPLICATION_DETAIL (
   APPLICATION_ID    INT PRIMARY KEY NOT NULL,
   FIRST_NAME        CHAR(100),
   LAST_NAME         CHAR(100),
+  POSITION          CHAR(100),
   STATUS            CHAR(50)
 );
 ```
+
+| APPLICATION_ID | FIRST_NAME | LAST_NAME | POSITION | STATUS |
+| - | - | - | - | - |
+| 1 | PETER | PARKER | SOFTWARE ENGINEER | SUBMISSION |
+| 2 | MARY | JANE | RECRUITER | PHONE_SCREEN |
+| 3 | HARRY | OSBORN | SITE RELIABILITY ENGINEER | ON_SITE_INTERVIEW |
+| 4 | GWEN | STACY | ENGINERING MANAGER | ACCEPTED |
 
 This solution may work alright if:
 1. Each task do not need sub-statuses (e.g. Pending, Passed, Failed)
@@ -50,14 +57,16 @@ This solution may work alright if:
 
 We quickly observe that this would not work well for our job application system given that:
 1. Each task has multiple sub-statuses (e.g. Pending, Passed, Failed)
-1. A single status cannot show when multiple tasks are PENDING in parallel (__Background Check__ and __Health Screening__ can be pending in parallel)
+1. A single status cannot show
+    - when multiple tasks are pending in parallel
+    - an overview status of all the microservices
 
 ## The Proposed Solution: Data Model For Statuses
 
+Using a table to maintain the statuses of all your microservices:
 ```sql
 CREATE TABLE APPLICATION_STATUS (
-  STATUS_ID                     INT PRIMARY KEY NOT NULL, 
-  APPLICATION_ID                INT FOREIGN KEY NOT NULL,
+  APPLICATION_ID                INT FOREIGN KEY NOT NULL, 
   PHONE_SCREEN_STATUS           CHAR(50),
   ON_SITE_INTERVIEW_STATUS      CHAR(50),
   BACKGROUND_CHECK_STATUS       CHAR(50),
@@ -66,6 +75,9 @@ CREATE TABLE APPLICATION_STATUS (
 );
 ```
 
-## Maintaining Consistency In Status Updates
-
-TODO
+| APPLICATION_ID | PHONE_SCREEN_STATUS | ON_SITE_INTERVIEW_STATUS | BACKGROUND_CHECK_STATUS | HEALTH_SCREENING_STATUS | OFFER_STATUS |
+| - | - | - | - | - | - |
+| 1 | PENDING |  | | | PENDING |
+| 2 | COMPLETED | COMPLETED | PENDING | PENDING | |
+| 3 | COMPLETED | COMPLETED | FAILED | CANCELLED | NO_OFFER |
+| 4 | COMPLETED | COMPLETED | COMPLETED | COMPLETED | ACCEPTED |
