@@ -1,0 +1,76 @@
+
+# Maintaining Workflow Statuses For An Event-Driven Microservice Architecture
+
+## Overview
+
+1. The Event-Driven Microservice Architecture
+1. Simple (but not ideal) solution
+1. The Proposed Solution: Data Model For Statuses
+1. Maintaining Consistency In Status Updates
+
+## The Event-Driven Microservice Architecture
+
+Imagine that we are building a job application system using a set of microservices. This system needs to process job applications based on a defined [workflow](https://kissflow.com/workflow/what-is-a-workflow/) (i.e. a sequence/set of tasks) to completion.
+
+For example, the set of tasks for a job application workflow may look like this:
+1. __Application Form__ (Draft, Submitted)
+1. __Phone Screen__ (Pending, Passed, Failed)
+1. __On-site Interview__ (Pending, Passed, Failed)
+1. __Hiring Decision__ (Pending, Passed, Failed)
+1. __Background Check__ (Pending, Passed, Failed)
+1. __Health Screening__ (Pending, Passed, Failed)
+1. __Offer__ (Pending, Accepted, Rejected, No Offer, Rescinded)
+
+In addition: #3 and #4 can come in any order (i.e. #3 first then #4, or #4 first then #3), #6 and #7 can be done in parallel.
+
+Given the set of tasks, we may then have a set of microservices like this:
+1. __ApplicationService__: Processes applications and notifies PhoneScreenService when initiated by HR
+1. __PhoneScreenService__: Schedules phone screen sessions and notifies TechnicalInterviewService if passed
+1. __OnSiteInterviewService__: Schedules on-site interviews and notifies HiringDecisionService if passed
+1. __HiringDecisionService__: Initiates meeting with committee for hiring decision. Notifies BackgroundCheckService and HealthScreeningService if passed
+1. __BackgroundCheckService__: Performs background checks on applicant
+1. __HealthScreeningService__: Initiates health screening session for applicant
+1. __OfferService__: Initiates offer to applicant if Background Check and Health Screening passed
+
+## Simple (but not ideal) solution
+
+Perhaps a simple solution is to maintain a `STATUS` column in the `APPLICATION_DETAIL` table itself. This column would show the status such as 'Submission', 'Phone Screen', 'On-site Interview', etc...
+
+```sql
+CREATE TABLE APPLICATION_DETAIL (
+  ID            INT PRIMARY KEY NOT NULL,
+  FIRST_NAME    CHAR(100),
+  LAST_NAME     CHAR(100),
+  STATUS        CHAR(50)
+);
+```
+
+This solution may work alright if:
+1. Each task do not need sub-statuses (e.g. Pending, Passed, Failed)
+1. Each task is executed in sequence (i.e. only one task is pending at any given time)
+
+We quickly observe that this would not work well for our job application system given that:
+1. Each task has multiple sub-statuses (e.g. Pending, Passed, Failed)
+1. A single status cannot show when multiple tasks are PENDING in parallel:
+    1. __Technical Interview__ and __Behavioural Interview__ tasks can be pending in parallel
+    1. __Background Check__ and __Health Screening__ can be pending in parallel
+
+## The Proposed Solution: Data Model For Statuses
+
+```sql
+CREATE TABLE APPLICATION_STATUS (
+  ID                            INT PRIMARY KEY NOT NULL,
+  SUBMISSION_STATUS             CHAR(50),
+  PHONE_SCREEN_STATUS           CHAR(50),
+  TECHNICAL_INTERVIEW_STATUS    CHAR(50),
+  BEHAVIORAL_INTERVIEW_STATUS   CHAR(50),
+  HIRING_DECISION_STATUS        CHAR(50),
+  BACKGROUND_CHECK_STATUS       CHAR(50),
+  HEALTH_SCREENING_STATUS       CHAR(50),
+  OFFER_STATUS                  CHAR(50),
+  CREATED_BY                    CHAR(100),
+  CREATED_DTTM                  TIMESTAMP,
+  UPDATED_BY                    CHAR(100),
+  UPDATED_DTTM                  TIMESTAMP
+);
+```

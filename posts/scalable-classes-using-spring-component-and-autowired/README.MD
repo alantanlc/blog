@@ -82,8 +82,7 @@ public class ProcessPaymentAction {
 
         // Save payment
         paymentService.save(payment);
-        
-        // Return
+
         return true;
     }
 
