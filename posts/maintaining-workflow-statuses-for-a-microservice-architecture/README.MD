@@ -16,18 +16,16 @@ For example, the set of tasks for a job application workflow may look like this:
 1. __Application Form__ (Draft, Submitted)
 1. __Phone Screen__ (Pending, Passed, Failed)
 1. __On-site Interview__ (Pending, Passed, Failed)
-1. __Hiring Decision__ (Pending, Passed, Failed)
 1. __Background Check__ (Pending, Passed, Failed)
 1. __Health Screening__ (Pending, Passed, Failed)
 1. __Offer__ (Pending, Accepted, Rejected, No Offer, Rescinded)
 
-In addition: #3 and #4 can come in any order (i.e. #3 first then #4, or #4 first then #3), #6 and #7 can be done in parallel.
+In addition: #4 and #5 can be done in parallel.
 
 Given the set of tasks, we may then have a set of microservices like this:
 1. __ApplicationService__: Processes applications and notifies PhoneScreenService when initiated by HR
-1. __PhoneScreenService__: Schedules phone screen sessions and notifies TechnicalInterviewService if passed
-1. __OnSiteInterviewService__: Schedules on-site interviews and notifies HiringDecisionService if passed
-1. __HiringDecisionService__: Initiates meeting with committee for hiring decision. Notifies BackgroundCheckService and HealthScreeningService if passed
+1. __PhoneScreenService__: Schedules phone screen sessions and notifies OnSiteInterviewService if passed
+1. __OnSiteInterviewService__: Schedules on-site interviews and notifies BackgroundCheckService and HealthScreeningService if passed
 1. __BackgroundCheckService__: Performs background checks on applicant
 1. __HealthScreeningService__: Initiates health screening session for applicant
 1. __OfferService__: Initiates offer to applicant if Background Check and Health Screening passed
@@ -38,10 +36,10 @@ Perhaps a simple solution is to maintain a `STATUS` column in the `APPLICATION_D
 
 ```sql
 CREATE TABLE APPLICATION_DETAIL (
-  ID            INT PRIMARY KEY NOT NULL,
-  FIRST_NAME    CHAR(100),
-  LAST_NAME     CHAR(100),
-  STATUS        CHAR(50)
+  APPLICATION_ID    INT PRIMARY KEY NOT NULL,
+  FIRST_NAME        CHAR(100),
+  LAST_NAME         CHAR(100),
+  STATUS            CHAR(50)
 );
 ```
 
@@ -51,26 +49,22 @@ This solution may work alright if:
 
 We quickly observe that this would not work well for our job application system given that:
 1. Each task has multiple sub-statuses (e.g. Pending, Passed, Failed)
-1. A single status cannot show when multiple tasks are PENDING in parallel:
-    1. __Technical Interview__ and __Behavioural Interview__ tasks can be pending in parallel
-    1. __Background Check__ and __Health Screening__ can be pending in parallel
+1. A single status cannot show when multiple tasks are PENDING in parallel (__Background Check__ and __Health Screening__ can be pending in parallel)
 
 ## The Proposed Solution: Data Model For Statuses
 
 ```sql
 CREATE TABLE APPLICATION_STATUS (
-  ID                            INT PRIMARY KEY NOT NULL,
-  SUBMISSION_STATUS             CHAR(50),
+  STATUS_ID                     INT PRIMARY KEY NOT NULL, 
+  APPLICATION_ID                INT FOREIGN KEY NOT NULL,
   PHONE_SCREEN_STATUS           CHAR(50),
-  TECHNICAL_INTERVIEW_STATUS    CHAR(50),
-  BEHAVIORAL_INTERVIEW_STATUS   CHAR(50),
-  HIRING_DECISION_STATUS        CHAR(50),
+  ON_SITE_INTERVIEW_STATUS      CHAR(50),
   BACKGROUND_CHECK_STATUS       CHAR(50),
   HEALTH_SCREENING_STATUS       CHAR(50),
-  OFFER_STATUS                  CHAR(50),
-  CREATED_BY                    CHAR(100),
-  CREATED_DTTM                  TIMESTAMP,
-  UPDATED_BY                    CHAR(100),
-  UPDATED_DTTM                  TIMESTAMP
+  OFFER_STATUS                  CHAR(50)
 );
 ```
+
+## Maintaining Consistency In Status Updates
+
+TODO
