@@ -44,7 +44,7 @@ CREATE TABLE APPLICATION_DETAIL (
 );
 ```
 
-| APPLICATION_ID | FIRST_NAME | LAST_NAME | POSITION | STATUS |
+| ID | FIRST_NAME | LAST_NAME | POSITION | STATUS |
 | - | - | - | - | - |
 | 1 | PETER | PARKER | SOFTWARE ENGINEER | SUBMISSION |
 | 2 | MARY | JANE | RECRUITER | PHONE_SCREEN |
@@ -59,11 +59,11 @@ We quickly observe that this would not work well for our job application system 
 1. Each task has multiple sub-statuses (e.g. Pending, Passed, Failed)
 1. A single status cannot show
     - when multiple tasks are pending in parallel
-    - an overview status of all the microservices
+    - a status overview of all the microservices
 
 ## The Proposed Solution: Data Model For Statuses
 
-Use `STATUS` table to maintain the statuses of all your microservices:
+Use a `STATUS` table to maintain the statuses of all your microservices:
 ```sql
 CREATE TABLE APPLICATION_STATUS (
   ID                            INT FOREIGN KEY NOT NULL, 
@@ -83,3 +83,15 @@ CREATE TABLE APPLICATION_STATUS (
 | 4 | SUBMITTED | PASSED | PASSED | PENDING | PENDING | |
 | 5 | SUBMITTED | PASSED | PASSED | FAILED | CANCELLED | NO_OFFER |
 | 6 | SUBMITTED | PASSED | PASSED | PASSED | PASSED | ACCEPTED |
+
+Pros:
+1. This table provides a good status overview of each application.
+    1. #1 is in DRAFT status
+    2. #5 FAILED the Background Check, and hence Health Screening is CANCELLED
+    3. #6 PASSED all stages and the offer was ACCEPTED
+1. The PENDING status is indicative of which microservice is holding up the application
+    1. #2 is PENDING on Phone Screen and nothing else (as denoted by the blank statuses)
+1. Querying this table by SQL is easy and hence comparing statuses across multiple applications is easy as well
+
+Cons:
+1. When we were to use this single status table to handle different types of workflows, we end up with many empty cells when the task is not applicable to the workflow.
