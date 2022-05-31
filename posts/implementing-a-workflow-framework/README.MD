@@ -18,11 +18,12 @@ TODO
 
 ## The Framework
 
-We can design a framework using `Flows`, `Stages`, and `Tasks`.
+We can design a framework using `Flows`, `Stages`, `Tasks` and `Context`.
 
 1. A __Flow__ executes a list of __Stages__ in sequence
 1. A __Stage__ executes a list of __Tasks__ in sequence
-1. A __Task__ contains the actual implementation
+1. A __Task__ executes the actual logic
+1. A __Context__ is a runtime object that stores details and states of a flow instance and is passed from task to task
 
 ### Flow
 
@@ -34,7 +35,9 @@ Attributes:
 
 Consider `Flow Id` as a product name derived from unique combination of product attributes.
 
-For example...
+For example, a <insert_product_name> product can be uniquely identified using <insert_attributes>:
+
+<insert_table>
 
 ### Stage
 
