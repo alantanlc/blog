@@ -104,6 +104,7 @@ public class Store {
 `cashierService.getByStoreId(this.id)` retrieves the list of cashiers associated with the given store id from either the cache or database.
 
 For our test on `store.getMaleCashers()`:
+
 1. we are not concerned with the underlying implementation of `cashierService.getByStoreId(this.id)`
 1. `cashierService.getByStoreId(this.id)` does not need to retrieve the result from an actual cache or database when we run the test
 
@@ -159,6 +160,7 @@ public class StoreTest() {
 In the above example, we have seen how we can initialize Store using `@InjectMocks` and `@Mocks`.
 
 There are also other ways to initialize `Store` in the test class:
+
 1. Manually initialize a `Store` instance
 1. Use `@Autowired` on `store` member variable
 
