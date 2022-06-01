@@ -206,4 +206,6 @@ public void StoreTest() {
 
 Unfortunately, you see errors in your console log when you try to run `StoreTest`.
 
-Resolving these errors may or may not be straightforward, depending on how complex the member variables are.
+Resolving these errors may or may not be straightforward, depending on how complex the member variables are. You will need to declare @ComponentScan so that the autowired variables can be initialized when the test is run.
+
+On top of that, component scanning can result in longer compile time when running the test file, especially for a large codebase.
