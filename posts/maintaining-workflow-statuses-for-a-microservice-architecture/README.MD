@@ -12,6 +12,7 @@
 Imagine that we are building a job application system using a set of microservices. This system needs to process job applications based on a defined [workflow](https://kissflow.com/workflow/what-is-a-workflow/) (i.e. a sequence/set of tasks) to completion.
 
 For example, the set of tasks for a job application workflow may look like this:
+
 1. __Application Form__ (Draft, Submitted)
 1. __Phone Screen__ (Pending, Passed, Failed)
 1. __On-site Interview__ (Pending, Passed, Failed)
@@ -22,7 +23,9 @@ For example, the set of tasks for a job application workflow may look like this:
 In addition: #4 and #5 can be done in parallel.
 
 Given the set of tasks, we may then have a set of microservices like this:
+
 ![architecture](./architecture.png)
+
 1. __ApplicationService__: Processes applications and notifies PhoneScreenService when initiated by HR
 1. __PhoneScreenService__: Schedules phone screen sessions and notifies OnSiteInterviewService if passed
 1. __OnSiteInterviewService__: Schedules on-site interviews and notifies BackgroundCheckService and HealthScreeningService if passed
@@ -52,10 +55,12 @@ CREATE TABLE APPLICATION_DETAIL (
 | 4 | GWEN | STACY | ENGINERING MANAGER | OFFER |
 
 This solution may work alright if:
+
 1. Each task do not need sub-statuses (e.g. Pending, Passed, Failed)
 1. Each task is executed in sequence (i.e. only one task is pending at any given time)
 
 We quickly observe that this would not work well for our job application system given that:
+
 1. Each task has multiple sub-statuses (e.g. Pending, Passed, Failed)
 1. A single status cannot show
     - when multiple tasks are pending in parallel
@@ -64,6 +69,7 @@ We quickly observe that this would not work well for our job application system 
 ## The Proposed Solution: Data Model For Statuses
 
 Use a `STATUS` table to maintain the statuses of all your microservices:
+
 ```sql
 CREATE TABLE APPLICATION_STATUS (
   ID                            INT FOREIGN KEY NOT NULL, 
@@ -85,13 +91,15 @@ CREATE TABLE APPLICATION_STATUS (
 | 6 | SUBMITTED | PASSED | PASSED | PASSED | PASSED | ACCEPTED |
 
 Pros:
+
 1. This table provides a good status overview of each application.
-    1. #1 is in DRAFT status
-    2. #5 FAILED the Background Check, and hence Health Screening is CANCELLED
-    3. #6 PASSED all stages and the offer was ACCEPTED
+    - 1 is in DRAFT status
+    - 5 FAILED the Background Check, and hence Health Screening is CANCELLED
+    - 6 PASSED all stages and the offer was ACCEPTED
 1. The PENDING status is indicative of which microservice is holding up the application
-    1. #2 is PENDING on Phone Screen and nothing else (as denoted by the blank statuses)
+    - 2 is PENDING on Phone Screen and nothing else (as denoted by the blank statuses)
 1. Querying this table by SQL is easy and hence comparing statuses across multiple applications is easy as well
 
 Cons:
+
 1. When we were to use this single status table to handle different types of workflows, we end up with many empty cells when the task is not applicable to the workflow.
