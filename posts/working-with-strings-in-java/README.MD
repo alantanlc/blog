@@ -49,7 +49,7 @@ String s1 = null;
 String s2 = "hi";
 boolean flag = False;
 
-if (StringUtils.(s1, s2)) {     // false
+if (StringUtils.(s1, s2)) {     // null-safe, evaluates to false
     flag = true;
 }
 
