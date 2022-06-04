@@ -62,4 +62,4 @@ It depends on the significance of `flag` (or whatever code that falls within the
 
 Perhaps you are writing a non-critical application where `flag` is eventually just a value displayed on the web page. The null-safe option would not cause  a break in the program flow (at least within your module/component/application) during runtime and you can always make the fix at a later time.
 
-But what if you are writing a software for a space rocket launch and not updating `flag` may potentially fail to activate another module at a critical moment? In this case, you might want to use the latter option so that such errorneous are caught and fixed up front before the software goes live.
+But what if you are writing a software for a space rocket launch and not updating `flag` may potentially fail to activate another module at a critical moment? In this case, you might want to use the latter option so that such errorneous scenarios are caught and fixed up front before the software goes live.
