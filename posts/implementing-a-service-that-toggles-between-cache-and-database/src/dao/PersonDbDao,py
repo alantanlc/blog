@@ -1,0 +1,5 @@
+
+class PersonDbDao(PersonDao):
+
+    def __init__(self):
+        pass
