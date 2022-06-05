@@ -6,7 +6,6 @@
 1. Model
 1. Data Access Object
 1. Service
-1. CacheMiss
 
 ## Model
 
