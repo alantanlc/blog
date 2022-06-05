@@ -10,12 +10,14 @@
 ## Model
 
 ```python
-class Person:
+from dataclasses import dataclass
 
-    def __init__(self):
-        self.id = None
-        self.first_name = None
-        self.last_name = None
+@dataclass
+class Person:
+    """ Person class. """
+    id: str
+    first_name: str
+    last_name: str
 
 ```
 
@@ -23,14 +25,14 @@ class Person:
 
 Data Access Object (DAO) is an abstract light object to provide connection to the datastore (e.g. cache, database).
 
-__PersonDao__:
+We define an abstract `PersonDao` class which will be inherited by a database and cache class.
+
+__PersonDao__
+
 ```python
-import abc
+from abc import ABC
 
-class PersonDao:
-
-    def __init__(self):
-        pass
+class PersonDao(ABC):
 
     def connect(self):
         pass
@@ -40,7 +42,10 @@ class PersonDao:
 
 ```
 
-__PersonDbDao__:
+__PersonDbDao__
+
+PersonDbDao connects to a database and performs SQL queries.
+
 ```python
 import mysql.connector
 
@@ -57,14 +62,17 @@ class PersonDbDao(PersonDao):
         )
         return db.cursor()
 
-    def get(self, id):
-        query = f"SELECT * FROM PERSON WHERE ID = '{id}'"
+    def get(self, key):
+        query = f"SELECT * FROM PERSON WHERE ID = '{key}'"
         self.cursor.execute(query)
         return self.cursor.fetchone()
 
 ```
 
-__PersonCacheDao__:
+__PersonCacheDao__
+
+PersonCacheDao connects to a cache and performs `get` and `put` operations.
+
 ```python
 from pymemcache.client import base
 
@@ -84,16 +92,16 @@ class PersonCacheDao(PersonDao):
 
 ## Service
 
-Server layer provides logic to operate on the data sent to and from the DAO and client.
+The server layer provides logic to operate on the data sent to and from the DAO and client. For security reasons, this layer should not have any relation to the database or cache.
 
-For security reaons, the service layer should not have any relation to the datastore.
+We define a PersonService interface with an abtract method `get` which must be implemented by the implementing class.
 
 __PersonServiceInterface__:
 
 ```python
-import abc
+from abc import ABC
 
-class PersonServiceInterface(metaclass=abc.ABCMeta):
+class PersonServiceInterface(ABC):
 
     @abstractmethod
     def get(self, id):
@@ -103,6 +111,11 @@ class PersonServiceInterface(metaclass=abc.ABCMeta):
 ```
 
 __PersonServiceImpl__:
+
+PersonServiceImpl implements PersonServiceInterface:
+
+1. A `use_db` flag is used to determine whether to perform the operation on the database or cache.
+1. When using cache, we should also handle cache-miss scenarios by looking up the entry from database and putting it into cache.
 
 ```python
 class PersonServiceImpl(PersonServiceInterface):
@@ -120,7 +133,7 @@ class PersonServiceImpl(PersonServiceInterface):
             value = self.cache.get(key)
             if value is None:
                 value = self.db.get(key)
-                if not self.cache.add(key, value):
+                if not self.cache.put(key, value):
                     logging.error('Cache add failed.')
         return value
 
