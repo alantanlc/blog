@@ -26,21 +26,17 @@ Data Access Object (DAO) is an abstract light object to provide connection to th
 
 __PersonDao__:
 ```python
+import abc
+
 class PersonDao:
 
     def __init__(self):
-        self.source = self.connect()
+        pass
 
     def connect(self):
         pass
 
     def get(self, id):
-        pass
-
-    def save(self, person):
-        pass
-
-    def put(self, person):
         pass
 
 ```
@@ -52,50 +48,38 @@ import mysql.connector
 class PersonDbDao(PersonDao):
 
     def __init__(self):
-        super.__init__()
-        self.cursor = None
+        self.cursor = self.connect()
 
     def connect(self):
-        source = mysql.connector.connect(
+        db = mysql.connector.connect(
             host = "localhost",
             user = "username",
             password = "passoword"
         )
-        self.cursor = db.cursor()
-        return source
+        return db.cursor()
 
     def get(self, id):
         query = f"SELECT * FROM PERSON WHERE ID = '{id}'"
         self.cursor.execute(query)
         return self.cursor.fetchone()
 
-    def save(self, person):
-        query = f"INSERT INTO PERSON (first_name, last_name) VALUES ({person.first_name}, {person.last_name})"
-        self.cursor.execute(query)
-        self.source.commit()
-        person.id = self.cursor.lastrowid
-        return person
-
-    def put(self, person):
-        pass
-
 ```
 
 __PersonCacheDao__:
 ```python
+from pymemcache.client import base
+
 class PersonCacheDao(PersonDao):
 
     def __init__(self):
-        pass
+        self.client = self.connect()
 
-    def get(self, id):
-        pass
+    def connect(self):
+        client = base.Client(('localhost', 11211))
+        return client
 
-    def save(self, person):
-        pass
-
-    def put(self, person):
-        pass
+    def get(self, key):
+        return self.client.get(key)
 
 ```
 
@@ -108,18 +92,14 @@ For security reaons, the service layer should not have any relation to the datas
 __PersonServiceInterface__:
 
 ```python
-class PersonServiceInterface:
+import abc
 
-    def __init__(self):
-        self.use_db = False
-        self.db = PersonDbDao()
-        self.cache = PersonCacheDao()
+class PersonServiceInterface(metaclass=abc.ABCMeta):
 
-    def use_db(self):
-        return self.use_db
-
-    def set_use_db(self, flag):
-        self.use_db = flag
+    @abstractmethod
+    def get(self, id):
+        """ Get person by id. """
+        pass
 
 ```
 
@@ -129,13 +109,21 @@ __PersonServiceImpl__:
 class PersonServiceImpl(PersonServiceInterface):
 
     def __init__(self):
-        pass
+        self.use_db = False
+        self.db = PersonDbDao()
+        self.cache = PersonCacheDao()
 
-    def get(self, id):
-        if self.use_db():
-            return self.db.get(id)
+    def get(self, key):
+        value = None
+        if self.use_db:
+            value = self.db.get(key)
         else:
-            return self.cache.get(id)
+            value = self.cache.get(key)
+            if value is None:
+                value = self.db.get(key)
+                if not self.cache.add(key, value):
+                    logging.error('Cache add failed.')
+        return value
 
 ```
 
