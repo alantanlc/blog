@@ -71,7 +71,7 @@ class PersonDbDao(PersonDao):
 
 __PersonCacheDao__
 
-PersonCacheDao connects to a cache and performs `get` and `put` operations.
+PersonCacheDao connects to a cache and performs cache operations.
 
 ```python
 from pymemcache.client import base
