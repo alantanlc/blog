@@ -1,6 +1,6 @@
 # Git Commands
 
-Git commands that I commonly use.
+Commonly used Git commands.
 
 ## Overview
 
@@ -123,4 +123,44 @@ Delete a remote branch:
 $ git push --delete origin feature/22.7
 ```
 
+Stash local changes:
 
+```shell
+$ git stash -- *
+```
+
+View stack of stashes:
+
+```shell
+$ git stash list
+```
+
+View changes for a stash 0 in stack:
+
+```shell
+$ git stash show 0
+```
+
+Pop stash from top of stack:
+
+```shell
+$ git stash pop
+```
+
+Pop stash #1 from stack:
+
+```shell
+$ git stash pop 1
+```
+
+Delete stash #0 from stack. Note that this cannot be undone:
+
+```shell
+$ git stash drop 0
+```
+
+Clear entire stack of stashes. Note that this cannot be undone:
+
+```shell
+$ git stash clear
+```
