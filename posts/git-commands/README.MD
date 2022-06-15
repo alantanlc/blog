@@ -33,7 +33,7 @@ Check out to an existing local branch:
 $ git checkout feature/22.7
 ```
 
-Checkout and track a remote branch on local. Here, `origin` is the name of your remote ll
+Checkout and track a remote branch on local. Here, `origin` is the name of your remote repository:
 
 ```shell
 $ git checkout --track origin/feature/22.8
@@ -99,7 +99,7 @@ Push changes to an existing remote branch:
 $ git push
 ```
 
-Pull changes of local checkout branch from remote
+Pull changes of local checkout branch from remote:
 
 ```shell
 $ git pull
