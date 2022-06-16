@@ -4,8 +4,9 @@ Commonly used Git commands.
 
 ## Overview
 
-1. Commands
-1. Combinations  
+1. Commands 
+1. Combinations
+1. Merge Conflicts 
 
 ## Commands
 
@@ -111,6 +112,12 @@ Pull changes from a remote branch to local checkout branch. This essentially __m
 $ git pull origin feature/22.8
 ```
 
+Abort a merge in case of a merge conflict:
+
+```shell
+$ git merge --abort
+```
+
 Delete a local branch. `-D` force deletes the branch even if it hasn't been pushed or merged yet:
 
 ```shell
@@ -135,7 +142,7 @@ View stack of stashes:
 $ git stash list
 ```
 
-View changes for a stash 0 in stack:
+View changes for stash `0` in stack:
 
 ```shell
 $ git stash show 0
@@ -147,13 +154,13 @@ Pop stash from top of stack:
 $ git stash pop
 ```
 
-Pop stash #1 from stack:
+Pop stash `1` from stack:
 
 ```shell
 $ git stash pop 1
 ```
 
-Delete stash #0 from stack. Note that this cannot be undone:
+Delete stash `0` from stack. Note that this cannot be undone:
 
 ```shell
 $ git stash drop 0
@@ -164,3 +171,79 @@ Clear entire stack of stashes. Note that this cannot be undone:
 ```shell
 $ git stash clear
 ```
+
+## Combinations
+
+When you have local changes but need to switch to another branch:
+
+```shell
+$ git add .
+$ git stash -- *
+$ git checkout feature/22.7_fix
+```
+
+When you are done and want to switch back to your previous local changes:
+
+```shell
+$ git checkout feature/22.7
+$ git stash pop
+```
+
+When you no longer need the local changes:
+
+```shell
+$ git reset .
+$ git restore .
+```
+
+Sometimes `git restore` may not be able to fully remove your local changes (e.g. newly created files). In that case, try this instead:
+
+```shell
+$ git add .
+$ git stash -- *
+$ git stash drop 0
+```
+
+When you need to remotely merge a branch:
+
+```shell
+$ git checkout feature/22.8
+$ git pull origin feature/22.7
+$ git push
+```
+
+## Merge Conflict
+
+Sometimes a conflict may occur when merging branches:
+
+```shell
+$ git checkout feature/22.8
+$ git pull origin feature/22.7
+
+conflict
+```
+
+__Steps to resolve__
+
+Get list of conflicted files:
+
+```shell
+$ git status
+
+```
+
+Resolve each conflicted file:
+
+```shell
+$ 
+```
+
+Commit the de-conflicted changes and continue with the merge:
+
+```shell
+$ git add .
+$ git commit
+Close notepad
+$ git push
+```
+
