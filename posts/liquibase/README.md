@@ -3,12 +3,11 @@
 
 ## Topics
 
-1. Use sequences over max
 1. Never modify a changeSet that has already been executed
 1. Manually fixing checksum errors in database
-1. Understanding databasechangelog
 1. Quick ways to resolve liquibase errors during local development
 1. Using `onFail="markRan"` and `onError="markRan"`
+1. Use sequences over max
 
 ## Never modify a change set that has already been executed
 
@@ -76,7 +75,7 @@ Create a new changeset to modify the previous changeset. Since in `payment_alan_
 
 ## Resolving checksum errors
 
-It is occasionally inevitable that checksum error-causing code gets merged and deployed. When this happens, there are generally two ways to resolve the problem.
+It is occasionally inevitable that checksum error-causing code gets merged and deployed. When this happens, there are generally a few ways to resolve the problem:
 
 1. Revert the modification in code
 1. Manually update the checksum value in `DATABASECHANGELOG` table
@@ -90,11 +89,21 @@ The downside of this approach is that it requires a new build and deployment of 
 
 ### Manually update the checksum value in `DATABASECHANGELOG` table
 
+When your application fails to start due to a liquibase error, you will find a log like this, typically within the last 20 lines of your log file:
+
+```
+log
+```
+
+The error log contains the new checksum of the modified changeset. You can manually update the checksum value in database and restart your application.
+
 ```sql
 UPDATE DATABASECHANGELOG SET CHECKSUM = '657f8b8da628ef83cf69101b6817150a' WHERE ID = 'payment_alan_3';
 ```
 
 ### Delete the changeset from `DATABASECHANGELOG` table
+
+By deleting the entry from database and restarting your application, the modified changeset will be executed again.
 
 ```sql
 DELETE FROM DATABASECHANGELOG WHERE ID = `payment_alan_3`;
