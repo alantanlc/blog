@@ -5,9 +5,9 @@
 
 1. Never modify a changeSet that has already been executed
 1. Resolving checksum errors
-1. Quick ways to resolve liquibase errors during local development
-1. Using `onFail="markRan"` and `onError="markRan"`
+1. Resolving liquibase errors during local development
 1. Primary key contraint violation
+1. Using `onFail="markRan"` and `onError="markRan"`
 1. Use sequences over max
 
 ## Never modify a change set that has already been executed
@@ -110,7 +110,7 @@ By deleting the entry from database and restarting your application, the modifie
 DELETE FROM DATABASECHANGELOG WHERE ID = `payment_alan_3`;
 ```
 
-## Quick ways to resolve liquibase errors during local development
+## Resolving Liquibase Errors During Local Development
 
 Someone has checked in some liquibase error-causing changeset and you unfortunately pulled it to your local repository.
 
@@ -132,3 +132,14 @@ Instead, simply comment out the changeset or even the entire changelog file if y
 
 Be sure not to check in the temporary comment!
 
+## Primary Key Constraint Violation
+
+TODO
+
+## Using `onFail="markRan"` and `onError="markRan"`
+
+TODO
+
+## Using Sequences Over Max
+
+TODO
