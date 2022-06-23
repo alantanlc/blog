@@ -55,7 +55,7 @@ Error log
 ```
 
 ```
-Note: Refer to `Resolving checksum errors` when this happens.
+Note: Refer to [Resolving checksum errors](#resolving-checksum-errors) when this happens.
 
 Such errors can be easily prevented. A general guideline is to __never modify any changeset that has already been pushed to a shared repository__.
 
