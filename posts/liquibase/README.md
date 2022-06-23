@@ -4,9 +4,10 @@
 ## Topics
 
 1. Never modify a changeSet that has already been executed
-1. Manually fixing checksum errors in database
+1. Resolving checksum errors
 1. Quick ways to resolve liquibase errors during local development
 1. Using `onFail="markRan"` and `onError="markRan"`
+1. Primary key contraint violation
 1. Use sequences over max
 
 ## Never modify a change set that has already been executed
@@ -16,9 +17,9 @@ When a liquibase changeset is successfully executed, a new entry is created in t
 ```xml
 <changeSet id="payment_alan_3" author="alan">
   <insert tableName="payment">
-    <column name=“id” valueSequence=“payment_seq”>
-    <column name=legal_entity” value=“123” />
-    <column name=“clearing_system” value=“sgFast” />
+    <column name="id" valueSequence="payment_seq">
+    <column name="legal_entity" value="123" />
+    <column name="clearing_system" value="sgFast" />
   </insert>
 </changeSet>
 ```
@@ -40,11 +41,11 @@ __DATABASECHANGELOG__ table:
 If you were to modify `payment_alan_3` and run your application, liquibase would throw an error and your application will fail to start:
 
 ```xml
-<changeSet id=“payment_alan_3” author=“alan”>
-  <insert tableName=“payment”>
-    <column name=“id” valueSequence=“PAYMENT_SEQ”>
-    <column name=legal_entity” value=“123” />
-    <column name=“clearing_system” value=“auNpp” /> <!-- modified -->
+<changeSet id="payment_alan_3" author="alan">
+  <insert tableName="payment">
+    <column name="id" valueSequence="PAYMENT_SEQ">
+    <column name="legal_entity" value="123" />
+    <column name="clearing_system" value="auNpp" /> <!-- modified -->
   </insert>
 </changeSet>
 ```
@@ -65,15 +66,15 @@ __What You Should Do Instead__
 Create a new changeset to modify the previous changeset. Since in `payment_alan_3` we have inserted an entry with `clearing_system` as `sgFast` and now we want to change the value to `auNpp`, we perform an update using a new changeset:
 
 ```xml
-<changeSet id=“payment_alan_4" author=“alan”>
-  <update tableName=“payment”>
-    <column name=“clearing_system" value=“auNpp” />
+<changeSet id="payment_alan_4" author="alan">
+  <update tableName="payment">
+    <column name="clearing_system" value="auNpp" />
     <where>clearing_system = "sgFast"</where>
-  </insert>
+  </update>
 </changeSet>
 ```
 
-## Resolving checksum errors
+## Resolving Checksum Errors
 
 It is occasionally inevitable that checksum error-causing code gets merged and deployed. When this happens, there are generally a few ways to resolve the problem:
 
@@ -92,7 +93,7 @@ The downside of this approach is that it requires a new build and deployment of 
 When your application fails to start due to a liquibase error, you will find a log like this, typically within the last 20 lines of your log file:
 
 ```
-log
+
 ```
 
 The error log contains the new checksum of the modified changeset. You can manually update the checksum value in database and restart your application.
