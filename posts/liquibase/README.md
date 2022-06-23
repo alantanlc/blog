@@ -109,3 +109,26 @@ By deleting the entry from database and restarting your application, the modifie
 ```sql
 DELETE FROM DATABASECHANGELOG WHERE ID = `payment_alan_3`;
 ```
+
+## Quick ways to resolve liquibase errors during local development
+
+Someone has checked in some liquibase error-causing changeset and you unfortunately pulled it to your local repository.
+
+Don't read too much into the issue! More often than not, they are careless mistakes that should be resolved by the originating author.
+
+Instead, simply comment out the changeset or even the entire changelog file if you don't need the liquibase changes for your local development and re-run your application.
+
+```xml
+<!--
+<changeSet id=“payment_alan_3” author=“alan”>
+  <insert tableName=“payment”>
+    <column name=“id” valueSequence=“PAYMENT_SEQ”>
+    <column name=legal_entity” value=“123” />
+    <column name=“clearing_system” value=“auNpp” /> <!— modified —>
+  </insert>
+</changeSet>
+-->
+```
+
+Be sure not to check in the temporary comment!
+
