@@ -38,7 +38,9 @@ __DATABASECHANGELOG__ table:
 | payment_alan_2 | alan | payment.xml | 20220622 | 2 | EXECUTED | 73df9317ef7c5bc5d038760213d7336c |
 | payment_alan_1 | alan | payment.xml | 20220622 | 1 | EXECUTED | 0fd078e5d26aa14cd6a9594eb6ec08cd |
 
-If you were to modify `payment_alan_3` and run your application, liquibase would throw an error and your application will fail to start:
+If you were to modify `payment_alan_3` and run your application, your application will fail to start due to a liquibase error.
+
+Modified changeset
 
 ```xml
 <changeSet id="payment_alan_3" author="alan">
