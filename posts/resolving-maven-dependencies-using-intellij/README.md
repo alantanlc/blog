@@ -22,10 +22,12 @@
 ## The Maven tab in IntelliJ
 
 Two ways to open up the Maven tab:
+
 1. By default, the Maven tab is collapsed on the right side of IntelliJ. Simply click and the Maven tab will open up
 1. Use CTRL+SHIFT+A and search for `Maven`
 
 On the Maven tab, you will see a list of Maven projects that are imported into IntelliJ. When you expand a project, you will see:
+
 1. Lifecycle
 1. Dependencies
 
