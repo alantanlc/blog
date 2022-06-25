@@ -18,22 +18,22 @@ TODO
 
 ## The Framework
 
-We can design a framework using `Flows`, `Stages`, `Tasks` and `Context`.
+We can design a framework using `Profile`, `Stage`, `Action` and `MessageContext`.
 
-1. A __Flow__ executes a list of __Stages__ in sequence
-1. A __Stage__ executes a list of __Tasks__ in sequence
-1. A __Task__ executes the actual logic
-1. A __Context__ is a runtime object that stores details and states of a flow instance and is passed from task to task
-
-### Flow
+1. A __Profile__ executes a list of __Stage__ in sequence
+1. A __Stage__ executes a list of __Action__ in sequence
+1. An __Action__ executes the actual logic 
+1. A __MessageContext__ is an object instance that is passed from action to action during runtime. It stores details and states of the profile flow.
+ 
+### Profile
 
 Attributes:
 
-1. Flow Id
-1. Default Flow Id
+1. Profile Id
+1. Default Profile Id
 1. Description
 
-Consider `Flow Id` as a product name derived from unique combination of product attributes.
+Consider `Profile Id` as a product name derived from unique combination of product attributes.
 
 For example, a <insert_product_name> product can be uniquely identified using <insert_attributes>:
 
@@ -48,8 +48,8 @@ Attributes:
 1. Stage Description
 1. Stage Order
 1. Flow Id
-
-### Task
+I
+### Action
 
 Attributes:
 
