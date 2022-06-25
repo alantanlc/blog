@@ -43,26 +43,35 @@ Example:
 | EVENT_ID | SERVICE_MESSAGE_TYPE | STATUS | CREATED_BY | CREATED_DTTM | UPDATED_BY | UPDATED_DTTM |
 | - | - | - | - | - | - | - |
 | a4e83689-37ee-40b3-a7db-10552d12a30d | RQ_B_STP | COMPLETED | SERVICE_A | 2019-10-12T07:20:50.52Z | SERVICE_B | 2019-10-12T07:20:50.52Z |
-| a4e83689-37ee-40b3-a7db-10552d12a30d | RQ_C_POST | COMPLETED | SERVICE_B | 2019-10-12T07:20:50.52Z | SERVICE_C | 2019-10-12T07:20:50.52Z |
-| a4e83689-37ee-40b3-a7db-10552d12a30d | RQ_C_POST | UNPROCESSED | SERVICE_A | 2019-10-12T07:20:50.52Z | SERVICE_A | 2019-10-12T07:20:50.52Z |
+| a4e83689-37ee-40b3-a7db-10552d12a30e | RQ_C_POST | COMPLETED | SERVICE_B | 2019-10-12T07:20:50.52Z | SERVICE_C | 2019-10-12T07:20:50.52Z |
+| a4e83689-37ee-40b3-a7db-10552d12a30f | RQ_B_STP | UNPROCESSED | SERVICE_A | 2019-10-12T07:20:50.52Z | SERVICE_A | 2019-10-12T07:20:50.52Z |
 
 ### Common Types Of Event Tables
 
 __Inbound__
 
-TODO
+Used to store event initiated from an external upstream system.
 
-__Request, Response and Working Data__
+__Request__
+
+A service contains one or more event processor which processes events based on message types.
+
+__Response and Working Data__
 
 TODO
 
 __Payload__
 
-| EVENT_ID | PAYLOAD | 
+| EVENT_ID | TOPIC | SOURCE_SERVICE | TARGET_SERVICE | PAYLOAD | CREATED_BY | CREATED_DTTM |
+| - | - | - | - | - | - | - |
+| a3e83689-37ee-40b3-a7db-10552d12a30d | REQUEST_TOPIC_A1 | UPSTREAM_A1 | SERVICE_A | {"event_id":"a3e83689-37ee-40b3-a7db-10552d12a30d","message_type":"RQ_A_INIT"} | SERVICE_A | 2019-10-12T07:20:50.52Z |
+| a3e83689-37ee-40b3-a7db-10552d12a30d | RESPONSE_TOPIC_A1 | SERVICE_A | UPSTREAM_A1 | {"event_id":"a3e83689-37ee-40b3-a7db-10552d12a30d","status":"ACCEPTED"} | SERVICE_A | 2019-10-12T07:20:50.52Z |
+| a3e83689-37ee-40b3-a7db-10552d12a30d | REQUEST_TOPIC_B | SERVICE_B | DOWNSTREAM_B | {"event_id":"a3e83689-37ee-40b3-a7db-10552d12a30d","message_type":"RQ_B_STP"} | SERVICE_B | 2019-10-12T07:20:50.52Z |
+| a4e83689-37ee-40b3-a7db-10552d12a30d | RESPONSE_TOPIC_B | DOWNSTREAM_B | SERVICE_B | {"event_id":"a4e83689-37ee-40b3-a7db-10552d12a30d","status":"ACCEPTED"} | SERVICE_B | 2019-10-12T07:20:50.52Z |
 
 ### Message Types
 
-TODO
+An event processor processes events based on different message types.
 
 ### Statuses
 
