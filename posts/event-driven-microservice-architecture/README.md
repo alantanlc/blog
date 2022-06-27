@@ -43,7 +43,7 @@ Example:
 | EVENT_ID | SERVICE_MESSAGE_TYPE | STATUS | CREATED_BY | CREATED_DTTM | UPDATED_BY | UPDATED_DTTM |
 | - | - | - | - | - | - | - |
 | a4e83689-37ee-40b3-a7db-10552d12a30d | RQ_B_STP | COMPLETED | SERVICE_A | 2019-10-12T07:20:50.52Z | SERVICE_B | 2019-10-12T07:20:50.52Z |
-| a4e83689-37ee-40b3-a7db-10552d12a30e | RQ_C_POST | COMPLETED | SERVICE_B | 2019-10-12T07:20:50.52Z | SERVICE_C | 2019-10-12T07:20:50.52Z |
+| a4e83689-37ee-40b3-a7db-10552d12a30e | DR_C_POST | COMPLETED | SERVICE_B | 2019-10-12T07:20:50.52Z | SERVICE_C | 2019-10-12T07:20:50.52Z |
 | a4e83689-37ee-40b3-a7db-10552d12a30f | RQ_B_STP | UNPROCESSED | SERVICE_A | 2019-10-12T07:20:50.52Z | SERVICE_A | 2019-10-12T07:20:50.52Z |
 
 ### Common Types Of Event Tables
@@ -54,7 +54,7 @@ Used to store event received from an external system.
 
 __Request__
 
-Used to store event initiated from a service internally within the application.
+Used to store event initiated internally by a service to another service within the same application.
 
 __Response__
 
@@ -62,7 +62,7 @@ Used to store event received from an external system.
 
 __Working Data__
 
-Used to store any
+Used to store event data sent during request or received from response.
 
 __Payload__
 
@@ -77,7 +77,17 @@ __Payload__
 
 An event processor processes events based on different message types.
 
+Sample message types:
+
+1. RQ_A_INIT
+1. RQ_B_STP
+1. RQ_B_REJ
+1. DR_C_POST
+1. CR_C_POST 
+
 ### Statuses
+
+Statuses are used to keep track of the lifecycle of each event. Common statuses include:
 
 1. UNPROCESSED
 1. IN_PROGRESS
