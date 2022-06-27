@@ -30,13 +30,13 @@
 
 An event table typically requires the following fields:
 
-1. EVENT_ID: A universally unique identifier for each event
-1. MESSAGE_TYPE: An enum that defines the type of event
-1. STATUS: Used to keep track of the status of the event processing
-1. CREATED_BY: Service that created the event
-1. CREATED_DTTM: Timestamp when event is created
-1. UPDATED_BY: Service that updated the event
-1. UPDATED_DTTM: Timestamp when event is updated
+1. `EVENT_ID`: A universally unique identifier for each event
+1. `MESSAGE_TYPE`: An enum that defines the type of event
+1. `STATUS`: Used to keep track of the status of the event processing
+1. `CREATED_BY`: Service that created the event
+1. `CREATED_DTTM`: Timestamp when event is created
+1. `UPDATED_BY`: Service that updated the event
+1. `UPDATED_DTTM`: Timestamp when event is updated
 
 Example:
 
@@ -50,15 +50,19 @@ Example:
 
 __Inbound__
 
-Used to store event initiated from an external upstream system.
+Used to store event received from an external system.
 
 __Request__
 
-A service contains one or more event processor which processes events based on message types.
+Used to store event initiated from a service internally within the application.
 
-__Response and Working Data__
+__Response__
 
-TODO
+Used to store event received from an external system.
+
+__Working Data__
+
+Used to store any
 
 __Payload__
 
