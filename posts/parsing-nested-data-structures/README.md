@@ -1,8 +1,8 @@
-# Parsing Nested Data Structure
+# Parsing Nested Data Structures
 
 ## Overview
 
-1. Nested Data Structure
+1. Nested data structure
 1. The bad way
 1. Concatenated null checks
 1. Nested null checks
@@ -15,39 +15,65 @@
 
 ```java
 class LevelOne {
+  String levelOneName;
   LevelTwo levelTwo;
 }
 
 class LevelTwo {
+  String levelTwoName;
   List<LevelThree> levelThreeList;
 }
 
 class LevelThree {
- Map<String, LevelFour> levelFourMap:
+  String levelThreeName;
+  Map<String, LevelFour> levelFourMap:
 }
 
 class LevelFour {
-  String name;
+  String levelFourName;
 }
 ``` 
 
 ## The Bad Way
 
-This is an extremely bad way of getting `name` because __NullPointerException__ is thrown when one of the objects is null unless it is certain that none of the objects will ever be null which is rarely the case. Plus, it wouldn't hurt to add null checks to be safe.
+While `levelFourName` can be retrieved using a string of getters, this is an extremely bad way because __NullPointerException__ is thrown when one of the objects is null.
 
 ```java
 public String getName(LevelOne levelOne) {
+  return levelOne.getLevelTwo().getLevelThreeList().get(0).getLevelFourMap().get("key").getLevelFourName();
   return levelOne
           .getLevelTwo()
           .getLevelThreeList()
           .get(0)
           .getLevelFourMap()
           .get("key")
-          .getName();
+          .getLevelFourName();
 }
 ```
 
+Unless it is certain that none of the objects will ever be null (which is rarely the case), it wouldn't hurt to use exception handling or null checks.
+
+With exception handling:
+
+```java
+public String getName(LevelOne levelOne) {
+  try {
+    return levelOne.getLevelTwo().getLevelThreeList().get(0).getLevelFourMap().get("key").getLevelFourName();
+    return levelOne
+            .getLevelTwo()
+            .getLevelThreeList()
+            .get(0)
+            .getLevelFourMap()
+            .get("key")
+            .getLevelFourName();
+  } catch (Exception e) {
+    return null;
+  }
+```
+
 ## Concatenated Null Checks
+
+In this method, we concatenate a list of null checks using `&&` condition. If the entire list of conditions is true, then it would be safe to get `levelFourName` in a string of getters.
 
 ```java
 public String getName(LevelOne levelOne) {
@@ -58,6 +84,7 @@ public String getName(LevelOne levelOne) {
     && !levelOne.getLevelTwo().getLevelThreeList().empty()
     && levelOne.getLevelTwo().getLevelThreeList().get(0).getLevelFourMap() != null
     && levelOne.getLevelTwo().getLevelThreeList().get(0).getLevelFourMap().contains("key")
+    && levelOne.getLevelTwo().getLevelThreeList().get(0).getLevelFourMap().get("key") != null
   ) {
     return levelOne
             .getLevelTwo()
@@ -65,41 +92,89 @@ public String getName(LevelOne levelOne) {
             .get(0)
             .getLevelFourMap()
             .get("key")
-            .getName();
+            .getLevelFourName();
   }
 }
 ```
 
-## Nested Null Checks
+So far, we are only able to retrieve a single field `levelFourName`. To retrieve multiple fields (e.g. `levelTwoName` and `levelFourName`), we will need use string of getters multiple times.
 
 ```java
-public String getName(LevelOne levelOne) {
-  String name = null;
+public List<String> getNames(LevelOne levelOne) {
+  List<String> result = new ArrayList<>();
+  if (
+    levelOne != null
+    && levelOne.getLevelTwo() != null
+    && levelOne.getLevelTwo().getLevelThreeList() != null
+    && !levelOne.getLevelTwo().getLevelThreeList().empty()
+    && levelOne.getLevelTwo().getLevelThreeList().get(0).getLevelFourMap() != null
+    && levelOne.getLevelTwo().getLevelThreeList().get(0).getLevelFourMap().contains("key")
+    && levelOne.getLevelTwo().getLevelThreeList().get(0).getLevelFourMap().get("key") != null
+  ) {
+    // Add LevelTwoName to result
+    result.add(levelOne
+            .getLevelTwo()
+            .getLevelTwoName();
+    
+    // Add LevelFourName to result
+    result.add(levelOne
+            .getLevelTwo()
+            .getLevelThreeList()
+            .get(0)
+            .getLevelFourMap()
+            .get("key")
+            .getLevelFourName());
+  }
+  return result;
+}
+```
+
+This method is inefficient considering we are calling getters on same objects multiple times. Plus, this exmaple below is unable to retrieve `levelThreeName` when `levelFourMap` or `levelFour` is null. To handle this scenario, we will need to create two almost similar methods `getLevelThreeName()` and `getLevelFourName()`.
+
+## Optional
+
+TODO
+
+## Nested Null Checks
+
+The following methods traveres the nested data structure level by level. This allows us to retrieve `levelThreeName` even if the remaining nested objects are null.
+
+```java
+public List<String> getNames(LevelOne levelOne) {
+  List<String> result = new ArrayList<>();
   if (levelOne != null) {
     LevelTwo levelTwo = levelOne.getLevelTwo();
     if (levelTwo != null) {
       List<LevelThree> levelThreeList = levelTwo.getLevelThreeList();
       if (levelThreeList != null && !levelThreeList.empty()) {
-        Map<String, LevelFour> levelFourMap = levelThreeList.get(0);
+        LevelThree levelThree = levelThreeList.get(0);
+        // Add levelThreeName to result
+        result.add(levelThree.getName());
+        Map<String, LevelFour> levelFourMap = levelThree.getLevelFourMap();
         if (levelFourMap != null && levelFourMap.contains("key")) {
           LevelFour levelFour = levelFourMap.get("key");
           if (levelFour != null) {
-            name = levelFour.getName();
+            // Add levelFourName to result
+            result.add(levelFour.getLevelFourName());
           }
         }
       }
     }
   }
-  return name;
+  return result;
 }
 ```
+
+Needless to say, this method has poor readability.
 
 ## Flattened Null Checks
 
 Option 1: Skip assignment if null
 
 ```java
-public String getName(LevelOne levelOne) {
+public List<String> getNames(LevelOne levelOne) {
+  List<String> result = new ArrayList<>();
+
   LevelTwo levelTwo;
   if (levelOne != null) {
     levelTwo = levelOne.getLevelTwo();
@@ -107,12 +182,15 @@ public String getName(LevelOne levelOne) {
 
   List<LevelThree> levelThreeList;
   if (levelTwo != null) {
-    levelThree = levelTwo.getLevelThreeList();
+    levelThreeList = levelTwo.getLevelThreeList();
   }
 
   Map<String, LevelFour> levelFourMap;
   if (levelThreeList != null && !levelThreeList.empty()) {
-    LevelThree levelThree = levelThreeList.get(0).getLevelFourMap();
+    LevelThree levelThree = levelThreeList.get(0);
+    // Add levelThreeName to result
+    result.add(levelThree.getName());
+    levelFourMap = levelThree.getLevelFourMap();
   }
 
   LevelFour levelFour;
@@ -120,12 +198,12 @@ public String getName(LevelOne levelOne) {
     levelFour = levelFourMap.get("key");
   }
 
-  String name = null;
   if (levelFour != null) {
-    name = levelFour.getName();
+    // Add levelFourName to result
+    result.add(levelFour.getName());
   }
 
-  return name;
+  return result;
 }
 ```
 
