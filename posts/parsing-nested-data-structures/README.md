@@ -1,15 +1,17 @@
 # Parsing Nested Data Structures
 
+Parsing nested data structures can be tricky. This README shares multiple ways to parse complex objects along with the common pitfalls and pros and cons.
+
 ## Overview
 
 1. Nested data structure
-1. The bad way
+1. String of getters
 1. Concatenated null checks
-1. Nested null checks
-1. Flattened null checks
 1. Optional
 1. StatementHandler
 1. Mapstruct 
+1. Nested null checks
+1. Flattened null checks
 
 ## Nested Data Structure
 
@@ -34,7 +36,7 @@ class LevelFour {
 }
 ``` 
 
-## The Bad Way
+## String Of Getters
 
 While `levelFourName` can be retrieved using a string of getters, this is an extremely bad way because __NullPointerException__ is thrown when one of the objects is null.
 
@@ -51,7 +53,7 @@ public String getName(LevelOne levelOne) {
 }
 ```
 
-Unless it is certain that none of the objects will ever be null (which is rarely the case), it wouldn't hurt to include exception handling or null checks.
+Unless it is certain that none of the objects will ever be null (which is rarely the case!), it wouldn't hurt to include exception handling or null checks.
 
 With exception handling:
 
@@ -97,7 +99,7 @@ public String getName(LevelOne levelOne) {
 }
 ```
 
-So far, we've been only able to retrieve a single field `levelFourName`. To retrieve multiple fields (e.g. `levelTwoName` and `levelFourName`), we will need use string of getters multiple times.
+So far, we've only been able to retrieve a single field `levelFourName`. To retrieve multiple fields (e.g. `levelTwoName` and `levelFourName`), we will need use multiple string of getters.
 
 ```java
 public List<String> getNames(LevelOne levelOne) {
@@ -129,15 +131,23 @@ public List<String> getNames(LevelOne levelOne) {
 }
 ```
 
-This method is inefficient considering that we are calling getters on same objects multiple times. Plus, this exmaple below is unable to retrieve `levelTwoName` when `levelFourMap` or `levelFour` is null. To handle this scenario, we will need to create two almost similar methods `getLevelTwoName()` and `getLevelFourName()`.
+This method is inefficient considering that we are calling getters on same objects multiple times. Plus, we are unable to retrieve `levelTwoName` when  `levelFourMap` or `levelFour` is null. To handle this scenario, we will need to create two almost similar looking methods `getLevelTwoName()` and `getLevelFourName()`.
 
 ## Optional
 
 TODO
 
+## StatementHandler
+
+TODO 
+
+## Mapstruct 
+
+TODO
+
 ## Nested Null Checks
 
-The following methods traverses the nested data structure level by level. This allows us to retrieve `levelTwoName` even if the remaining nested objects are null (e.g. `levelFourMap` is null):
+This method traverses the nested data structure level by level. This allows us to retrieve `levelTwoName` even if the remaining nested objects are null (e.g. `levelFourMap` is null). However, this method has poor readability.
 
 ```java
 public List<String> getNames(LevelOne levelOne) {
@@ -164,9 +174,9 @@ public List<String> getNames(LevelOne levelOne) {
 }
 ```
 
-Needless to say, this method has poor readability.
-
 ## Flattened Null Checks
+
+We can flatten the traversal using the following two options.
 
 Option 1: Skip assignment if null
 
