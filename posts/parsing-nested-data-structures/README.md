@@ -42,7 +42,7 @@ While `levelFourName` can be retrieved using a string of getters, this is an ext
 public String getName(LevelOne levelOne) {
   return levelOne.getLevelTwo().getLevelThreeList().get(0).getLevelFourMap().get("key").getLevelFourName();
   return levelOne
-          .getLevelTwo()
+          .getLevelTwo() // NullPointerException is thrown if levelOne is null, or so on...
           .getLevelThreeList()
           .get(0)
           .getLevelFourMap()
@@ -51,7 +51,7 @@ public String getName(LevelOne levelOne) {
 }
 ```
 
-Unless it is certain that none of the objects will ever be null (which is rarely the case), it wouldn't hurt to use exception handling or null checks.
+Unless it is certain that none of the objects will ever be null (which is rarely the case), it wouldn't hurt to include exception handling or null checks.
 
 With exception handling:
 
@@ -73,7 +73,7 @@ public String getName(LevelOne levelOne) {
 
 ## Concatenated Null Checks
 
-In this method, we concatenate a list of null checks using `&&` condition. If the entire list of conditions is true, then it would be safe to get `levelFourName` in a string of getters.
+In this method, we concatenate a list of null checks using `&&` condition. If the list of conditions is true, then it would be safe to get `levelFourName` using a string of getters.
 
 ```java
 public String getName(LevelOne levelOne) {
@@ -97,7 +97,7 @@ public String getName(LevelOne levelOne) {
 }
 ```
 
-So far, we are only able to retrieve a single field `levelFourName`. To retrieve multiple fields (e.g. `levelTwoName` and `levelFourName`), we will need use string of getters multiple times.
+So far, we've been only able to retrieve a single field `levelFourName`. To retrieve multiple fields (e.g. `levelTwoName` and `levelFourName`), we will need use string of getters multiple times.
 
 ```java
 public List<String> getNames(LevelOne levelOne) {
@@ -129,7 +129,7 @@ public List<String> getNames(LevelOne levelOne) {
 }
 ```
 
-This method is inefficient considering we are calling getters on same objects multiple times. Plus, this exmaple below is unable to retrieve `levelThreeName` when `levelFourMap` or `levelFour` is null. To handle this scenario, we will need to create two almost similar methods `getLevelThreeName()` and `getLevelFourName()`.
+This method is inefficient considering that we are calling getters on same objects multiple times. Plus, this exmaple below is unable to retrieve `levelTwoName` when `levelFourMap` or `levelFour` is null. To handle this scenario, we will need to create two almost similar methods `getLevelTwoName()` and `getLevelFourName()`.
 
 ## Optional
 
@@ -137,7 +137,7 @@ TODO
 
 ## Nested Null Checks
 
-The following methods traveres the nested data structure level by level. This allows us to retrieve `levelThreeName` even if the remaining nested objects are null.
+The following methods traverses the nested data structure level by level. This allows us to retrieve `levelTwoName` even if the remaining nested objects are null (e.g. `levelFourMap` is null):
 
 ```java
 public List<String> getNames(LevelOne levelOne) {
@@ -145,12 +145,11 @@ public List<String> getNames(LevelOne levelOne) {
   if (levelOne != null) {
     LevelTwo levelTwo = levelOne.getLevelTwo();
     if (levelTwo != null) {
+      // Add levelTwoName to result
+      result.add(levelTwo.getLevelTwoName());
       List<LevelThree> levelThreeList = levelTwo.getLevelThreeList();
       if (levelThreeList != null && !levelThreeList.empty()) {
-        LevelThree levelThree = levelThreeList.get(0);
-        // Add levelThreeName to result
-        result.add(levelThree.getName());
-        Map<String, LevelFour> levelFourMap = levelThree.getLevelFourMap();
+        Map<String, LevelFour> levelFourMap = levelThreeList.get(0).getLevelFourMap();
         if (levelFourMap != null && levelFourMap.contains("key")) {
           LevelFour levelFour = levelFourMap.get("key");
           if (levelFour != null) {
@@ -182,15 +181,14 @@ public List<String> getNames(LevelOne levelOne) {
 
   List<LevelThree> levelThreeList;
   if (levelTwo != null) {
+    // Add levelTwoName to result
+    result.add(levelTwo.getLevelTwoName());
     levelThreeList = levelTwo.getLevelThreeList();
   }
 
   Map<String, LevelFour> levelFourMap;
   if (levelThreeList != null && !levelThreeList.empty()) {
-    LevelThree levelThree = levelThreeList.get(0);
-    // Add levelThreeName to result
-    result.add(levelThree.getName());
-    levelFourMap = levelThree.getLevelFourMap();
+    levelFourMap = levelThreeList.get(0).getLevelFourMap();
   }
 
   LevelFour levelFour;
@@ -200,7 +198,7 @@ public List<String> getNames(LevelOne levelOne) {
 
   if (levelFour != null) {
     // Add levelFourName to result
-    result.add(levelFour.getName());
+    result.add(levelFour.getLevelFourName());
   }
 
   return result;
@@ -210,7 +208,9 @@ public List<String> getNames(LevelOne levelOne) {
 Option 2: Return immediately if null
 
 ```java
-public String getName(LevelOne levelOne) {
+public List<String> getName(LevelOne levelOne) {
+  List<String> result = new ArrayList<>();
+
   if (levelOne == null) {
     return null;
   }
@@ -219,6 +219,9 @@ public String getName(LevelOne levelOne) {
   if (levelTwo == null) {
     return null;
   }
+
+  // Add levelTwoName to result
+  result.add(levelTwo.getLevelTwoName());
 
   List<LevelThree> levelThreeList = levelTwo.getLevelThreeList();
   if (levelThreeList == null || levelThreeList.empty()) {
@@ -235,6 +238,9 @@ public String getName(LevelOne levelOne) {
     return null;
   }
 
-  return levelFourMap.getName();
+  // Add levelFourName to result
+  result.add(levelFour.getLevelFourName());
+
+  return result;
 }
 ```
