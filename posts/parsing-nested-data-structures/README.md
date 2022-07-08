@@ -1,6 +1,6 @@
 # Parsing Nested Data Structures
 
-Parsing nested data structures can be tricky. This README shares multiple ways to parse complex objects along with the common pitfalls and pros and cons.
+Parsing nested data structures can be tricky. This README shares multiple ways to parse complex objects along with the common pitfalls, pros and cons.
 
 ## Overview
 
@@ -218,7 +218,7 @@ public List<String> getNames(LevelOne levelOne) {
 Option 2: Return immediately if null
 
 ```java
-public List<String> getName(LevelOne levelOne) {
+public List<String> getNames(LevelOne levelOne) {
   List<String> result = new ArrayList<>();
 
   if (levelOne == null) {
@@ -254,3 +254,67 @@ public List<String> getName(LevelOne levelOne) {
   return result;
 }
 ```
+
+Which option is better?
+
+__Option 2__ has better readability and is straighforward -- immediately return once a `null` object is found.
+
+However, in my opinion, __Option 1__ is better for two reasons:
+
+1. It handles the case where `levelTwoName` exists, but `levelFourMap` or `levelFour` objects are null. In this case, the method returns a single element in the list instad of null.
+1. Fewer test cases need to be written to achieve 100% code coverage. Option 2 requires __6__ while pption 1 requires only __2__ unit tests.
+
+__Unit tests for option 2__:
+
+```java
+@Test
+public void getNamesTest_shouldReturnNull() {
+  LevelOne levelOne = null;
+  assertNull(getNames(levelOne));
+}
+
+@Test
+public void getNamesTest_shouldReturnListWithTwoStrings() {
+  LevelOne levelOne = LevelUtil.getLevelOne();
+  List<String> result = getNames(levelOne));
+  assertEquals("levelTwoName", result.get(0));
+  assertEquals("levelFourName", result.get(1));
+}
+
+```
+
+__Unit tests for option 1__;
+
+```java
+
+```
+
+Util:
+
+```java
+public class LevelUtil {
+  public static LevelOne getLevelOne() {
+    // LevelOne
+    LevelOne levelOne = new LevelOne();
+
+    // LevelTwo
+    LevelTwo levelTwo = new LevelTwo();
+    levelTwo.setName("levelTwoName");
+    levelOne.setLevelTwo(levelTwo);
+
+    // LevelThree
+    List<LevelThree> levelThreeList= new ArrayList<>();
+    LevelThree levelThree = new LevelThree();
+    levelThreeList.add(levelThree);
+    levelTwo.setLevelThreeList(levelThreeList);
+
+    // LevelFour
+    Map<String, LevelFour> levelFourMap = new HashMap<>();
+    LevelFour levelFour = new LevelFour();
+    levelFour.setName("levelFourName");
+    levelThree.setLevelFourMap(levelFourMap);
+
+    return levelOne;
+  }
+}
+``
