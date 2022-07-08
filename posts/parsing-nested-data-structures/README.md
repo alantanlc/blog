@@ -295,7 +295,7 @@ public List<String> getNames(LevelOne levelOne) {
 }
 ```
 
-Which option is better?
+### Which Option Is Better?
 
 __Option 2__ and __Option 3__ has better readability and is straighforward -- immediately return null or result once a `null` object is found.
 
