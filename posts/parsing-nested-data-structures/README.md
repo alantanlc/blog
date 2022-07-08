@@ -9,7 +9,6 @@ Parsing nested data structures can be tricky. This README shares multiple ways t
 1. Concatenated null checks
 1. Optional
 1. StatementHandler
-1. Mapstruct 
 1. Nested null checks
 1. Flattened null checks
 
@@ -154,10 +153,6 @@ public getNames(LevelOne levelOne) {
 ## StatementHandler
 
 TODO 
-
-## Mapstruct 
-
-TODO
 
 ## Nested Null Checks
 
