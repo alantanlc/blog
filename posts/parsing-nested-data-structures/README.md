@@ -4,13 +4,13 @@ Parsing nested data structures can be tricky. This README shares multiple ways t
 
 ## Overview
 
-1. Nested data structure
-1. String of getters
-1. Concatenated null checks
-1. Optional
-1. StatementHandler
-1. Nested null checks
-1. Flattened null checks
+1. [Nested data structure](#nested-data-structure)
+1. [String of getters](#string-of-getters)
+1. [Concatenated null checks](#concatenated-null-checks)
+1. [Optional](#optional)
+1. [StatementHandler](#statementhandler)
+1. [Nested null checks](#nested-null-checks)
+1. [Flattened null checks](#flattened-null-checks)
 
 ## Nested Data Structure
 
