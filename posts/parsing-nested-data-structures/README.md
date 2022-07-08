@@ -215,7 +215,7 @@ public List<String> getNames(LevelOne levelOne) {
 }
 ```
 
-Option 2: Return immediately if null
+Option 2: Return __null__ immediately if null
 
 ```java
 public List<String> getNames(LevelOne levelOne) {
@@ -255,16 +255,57 @@ public List<String> getNames(LevelOne levelOne) {
 }
 ```
 
+Option 3: Return __result__ immediately if null
+
+```java
+public List<String> getNames(LevelOne levelOne) {
+  List<String> result = new ArrayList<>();
+
+  if (levelOne == null) {
+    return result;
+  }
+
+  LevelTwo levelTwo = levelOne.getLevelTwo();
+  if (levelTwo == null) {
+    return result;
+  }
+
+  // Add levelTwoName to result
+  result.add(levelTwo.getLevelTwoName());
+
+  List<LevelThree> levelThreeList = levelTwo.getLevelThreeList();
+  if (levelThreeList == null || levelThreeList.empty()) {
+    return result;
+  }
+
+  Map<String, LevelFour> levelFourMap = levelThreeList.get(0).getLevelFourMap();
+  if (levelFourMap == null || !levelFourMap.contains("key")) {
+    return result; 
+  }
+  
+  LevelFour levelFour = levelFourMap.get("key");
+  if (levelFour == null) {
+    return result;
+  }
+
+  // Add levelFourName to result
+  result.add(levelFour.getLevelFourName());
+
+  return result;
+}
+```
+
 Which option is better?
 
-__Option 2__ has better readability and is straighforward -- immediately return once a `null` object is found.
+__Option 2__ and __Option 3__ has better readability and is straighforward -- immediately return null or result once a `null` object is found.
 
 However, in my opinion, __Option 1__ is better for two reasons:
 
-1. It handles the case where `levelTwoName` exists, but `levelFourMap` or `levelFour` objects are null. In this case, the method returns a single element in the list instad of null.
-1. Fewer test cases need to be written to achieve 100% code coverage. Option 2 requires __6__ while pption 1 requires only __2__ unit tests.
+1. It handles the case where `levelTwoName` exists, but `levelFourMap` or `levelFour` objects are null, which cannot be achieved using option 2.
+1. It handles certain scenarios where `levelTwo` does not exist, but `levelFourName` exists, which cannot be achieved using option 3.
+1. Fewer test cases need to be written to achieve 100% code coverage. Option 2 and option 3 require __6__ while option 1 requires only __2__ unit tests.
 
-__Unit tests for option 2__:
+__Unit tests for `option 1` (2 unit tests for 100% code coverage):__
 
 ```java
 @Test
@@ -277,19 +318,54 @@ public void getNamesTest_shouldReturnNull() {
 public void getNamesTest_shouldReturnListWithTwoStrings() {
   LevelOne levelOne = LevelUtil.getLevelOne();
   List<String> result = getNames(levelOne));
+  assertEquals(2, result.size());
   assertEquals("levelTwoName", result.get(0));
   assertEquals("levelFourName", result.get(1));
 }
-
 ```
 
-__Unit tests for option 1__;
+__Unit tests for `option 2` (6 unit tests for 100% code coverage):__
 
 ```java
+@Test
+public void getNamesTest_levelOneNull_shouldReturnNull {
+  LevelOne levelOne = null;
+  assertNull(getName(levelOne));
+}
 
+@Test
+public void getNamesTest_levelTwoNull_shouldReturnNull {
+  LevelOne levelOne = LevelUtil.getLevelOneWithLevelTwoNull();
+  assertNull(getName(levelOne));
+}
+
+@Test
+public void getNamesTest_levelThreeNull_shouldReturnListWithOneString {
+  LevelOne levelOne = LevelUtil.getLevelOneWithLevelThreeNull();
+  List<String> result = getNames(levelOne));
+  assertEquals(1, result.size());
+  assertEquals("levelTwoName", result.get(0));
+}
+
+@Test
+public void getNamesTest_levelFourNull_shouldReturnListWithOneString {
+  LevelOne levelOne = LevelUtil.getLevelOneWithLevelFourNull();
+  List<String> result = getNames(levelOne));
+  assertEquals(1, result.size());
+  assertEquals("levelTwoName", result.get(0));
+}
+
+@Test
+public void getNamesTest_levelFourNull_shouldReturnListWithTwoStrings {
+  LevelOne levelOne = LevelUtil.getLevelOne();
+  List<String> result = getNames(levelOne));
+  assertEquals(2, result.size());
+  assertEquals("levelTwoName", result.get(0));
+  assertEquals("levelFourName", result.get(1));
+}
 ```
 
-Util:
+__Util:__
 
 ```java
 public class LevelUtil {
