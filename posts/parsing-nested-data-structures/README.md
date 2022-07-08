@@ -312,9 +312,9 @@ However, __Option 1__ is better for two reasons:
 
 1. It handles the case where `levelTwoName` exists, but `levelFourMap` or `levelFour` objects are null, which cannot be achieved using option 2.
 1. It handles certain cases where `levelTwo` does not exist, but `levelFourName` exists, which cannot be achieved using option 3.
-1. Fewer test cases need to be written to achieve 100% code coverage. Option 2 and option 3 require __5__ while option 1 requires only __1__ unit test.
+1. Fewer test cases need to be written to achieve 100% code coverage. Options 2 and 3 require __5__ unit tests and __4__ helper methods while option 1 requires only __1__ unit test and __1__ helper method.
 
-__Unit tests for `option 1` (1 unit tests for 100% code coverage):__
+__Unit tests for `option 1` (1 unit tests, 1 helper method, 100% code coverage):__
 
 ```java
 @Test
@@ -327,7 +327,7 @@ public void getNamesTest_shouldReturnListWithTwoStrings() {
 }
 ```
 
-__Unit tests for `option 2` (5 unit tests for 100% code coverage):__
+__Unit tests for `option 2` (5 unit tests, 4 helper methods, 100% code coverage):__
 
 ```java
 @Test
@@ -344,7 +344,7 @@ public void getNamesTest_levelTwoNull_shouldReturnNull {
 
 @Test
 public void getNamesTest_levelThreeNull_shouldReturnListWithOneString {
-  LevelOne levelOne = LevelUtil.getLevelOneWithLevelThreeNull();
+  LevelOne levelOne = LevelUtil.getLevelOneWithLevelThreeListNull();
   List<String> result = getNames(levelOne));
   assertEquals(1, result.size());
   assertEquals("levelTwoName", result.get(0));
@@ -352,7 +352,7 @@ public void getNamesTest_levelThreeNull_shouldReturnListWithOneString {
 
 @Test
 public void getNamesTest_levelFourNull_shouldReturnListWithOneString {
-  LevelOne levelOne = LevelUtil.getLevelOneWithLevelFourNull();
+  LevelOne levelOne = LevelUtil.getLevelOneWithLevelFourMapNull();
   List<String> result = getNames(levelOne));
   assertEquals(1, result.size());
   assertEquals("levelTwoName", result.get(0));
@@ -368,7 +368,7 @@ public void getNamesTest_levelFourNull_shouldReturnListWithTwoStrings {
 }
 ```
 
-__Util:__
+__LevelUtil:__
 
 ```java
 public class LevelUtil {
@@ -396,16 +396,22 @@ public class LevelUtil {
     return levelOne;
   }
   
-  public class getLevelOneWithLevelTwoNull {
-    // ...
+  public static LevelOne getLevelOneWithLevelTwoNull() {
+    LevelOne levelOne = getLevelOne();
+    levelOne.setLevelTwo(null);
+    return levelOne;
   }
   
-  public static class getLevelOneWithLevelThreeNull() {
-    // ...
+  public static LevelOne getLevelOneWithLevelThreeListNull() {
+    LevelOne levelOne = getLevelOne();
+    levelOne.getLevelTwo().setLevelThreeList(null);
+    return levelOne;
   }
   
-  public static class getLevelOneWithLevelFourNull() {
-    // ...
+  public static LevelOne getLevelOneWithLevelFourMapNull() {
+    LevelOne levelOne = getLevelOne();
+    levelOne.getLevelTwo().getLevelThreeList().get(0).setLevelFourMap(null);
+    return levelOne;
   }
 
 }
