@@ -98,7 +98,7 @@ public String getName(LevelOne levelOne) {
 }
 ```
 
-So far, we've only been able to retrieve a single field `levelFourName`. To retrieve multiple fields (e.g. `levelTwoName` and `levelFourName`), we will need use multiple string of getters.
+So far, we've only been able to retrieve a single field `levelFourName`. To retrieve multiple fields (e.g. `levelTwoName` and `levelFourName`), we will need to use multiple string of getters.
 
 ```java
 public List<String> getNames(LevelOne levelOne) {
@@ -130,7 +130,7 @@ public List<String> getNames(LevelOne levelOne) {
 }
 ```
 
-This method is inefficient considering that we are calling getters on same objects multiple times. Plus, we are unable to retrieve `levelTwoName` when  `levelFourMap` or `levelFour` is null. To handle this scenario, we will need to create two almost similar looking methods `getLevelTwoName()` and `getLevelFourName()`.
+This method is inefficient considering that we are calling getters on same objects multiple times. Plus, we are unable to retrieve `levelTwoName` when  `levelFourMap` or `levelFour` is null. To handle this scenario, we will need to create two almost similar looking methods `getLevelTwoName()` and `getLevelFourName()`, which again will be calling repeated getters which is really inefficient.
 
 ## Optional
 
