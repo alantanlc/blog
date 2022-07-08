@@ -303,7 +303,7 @@ However, in my opinion, __Option 1__ is better for two reasons:
 
 1. It handles the case where `levelTwoName` exists, but `levelFourMap` or `levelFour` objects are null, which cannot be achieved using option 2.
 1. It handles certain scenarios where `levelTwo` does not exist, but `levelFourName` exists, which cannot be achieved using option 3.
-1. Fewer test cases need to be written to achieve 100% code coverage. Option 2 and option 3 require __6__ while option 1 requires only __2__ unit tests.
+1. Fewer test cases need to be written to achieve 100% code coverage. Option 2 and option 3 require __5__ while option 1 requires only __2__ unit tests.
 
 __Unit tests for `option 1` (2 unit tests for 100% code coverage):__
 
@@ -324,7 +324,7 @@ public void getNamesTest_shouldReturnListWithTwoStrings() {
 }
 ```
 
-__Unit tests for `option 2` (6 unit tests for 100% code coverage):__
+__Unit tests for `option 2` (5 unit tests for 100% code coverage):__
 
 ```java
 @Test
