@@ -156,7 +156,7 @@ TODO
 
 ## Nested Null Checks
 
-This method traverses the nested data structure level by level. This allows us to retrieve `levelTwoName` even if the remaining nested objects are null (e.g. `levelFourMap` is null). However, this method has poor readability.
+This method __traverses__ the nested data structure level by level. This allows us to retrieve `levelTwoName` even if the remaining nested objects are null (e.g. if `levelFourMap` is null). However, this method has poor readability.
 
 ```java
 public List<String> getNames(LevelOne levelOne) {
@@ -308,21 +308,15 @@ public List<String> getNames(LevelOne levelOne) {
 
 __Option 2__ and __Option 3__ has better readability and is straighforward -- immediately return null or result once a `null` object is found.
 
-However, in my opinion, __Option 1__ is better for two reasons:
+However, __Option 1__ is better for two reasons:
 
 1. It handles the case where `levelTwoName` exists, but `levelFourMap` or `levelFour` objects are null, which cannot be achieved using option 2.
-1. It handles certain scenarios where `levelTwo` does not exist, but `levelFourName` exists, which cannot be achieved using option 3.
-1. Fewer test cases need to be written to achieve 100% code coverage. Option 2 and option 3 require __5__ while option 1 requires only __2__ unit tests.
+1. It handles certain cases where `levelTwo` does not exist, but `levelFourName` exists, which cannot be achieved using option 3.
+1. Fewer test cases need to be written to achieve 100% code coverage. Option 2 and option 3 require __5__ while option 1 requires only __1__ unit test.
 
-__Unit tests for `option 1` (2 unit tests for 100% code coverage):__
+__Unit tests for `option 1` (1 unit tests for 100% code coverage):__
 
 ```java
-@Test
-public void getNamesTest_shouldReturnNull() {
-  LevelOne levelOne = null;
-  assertNull(getNames(levelOne));
-}
-
 @Test
 public void getNamesTest_shouldReturnListWithTwoStrings() {
   LevelOne levelOne = LevelUtil.getLevelOne();
@@ -401,5 +395,19 @@ public class LevelUtil {
 
     return levelOne;
   }
+  
+  public class getLevelOneWithLevelTwoNull {
+    // ...
+  }
+  
+  public static class getLevelOneWithLevelThreeNull() {
+    // ...
+  }
+  
+  public static class getLevelOneWithLevelFourNull() {
+    // ...
+  }
+
 }
+
 ```
