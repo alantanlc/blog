@@ -135,7 +135,21 @@ This method is inefficient considering that we are calling getters on same objec
 
 ## Optional
 
-TODO
+The [Optional](https://www.baeldung.com/java-optional) class was introduced in Java 8. While this method follows proper coding convention, it can be difficult to write and understand.
+
+```java
+public getNames(LevelOne levelOne) {
+  return Optional.ofNullable(levelOne)
+          .map(LevelOne::getLevelTwo)
+          .map(LevelTwo::getLevelThreeList)
+          .filter(list -> !list.empty())
+          .map(list -> list.get(0))
+          .map(LevelThree::getLevelFourMap)
+          .map(map -> map.get("key"))
+          .map(LevelFour::getName)
+          .orElse(null);
+}
+```
 
 ## StatementHandler
 
