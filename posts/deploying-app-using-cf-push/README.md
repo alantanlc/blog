@@ -110,9 +110,9 @@ App started
 
 request state: started
 instances: 1/1
-usage: 2G c 1 instances
+usage: 2G x 1 instances
 urls: my-app.example.com
-last uplaoded: Wed Jun 8 23:43:15 UTC 2022
+last uploaded: Wed Jun 8 23:43:15 UTC 2022
 stack: cflinuxfs3
 buildpack: java_buildpack
 

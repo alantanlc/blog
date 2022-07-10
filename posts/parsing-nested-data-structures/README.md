@@ -5,12 +5,12 @@ Parsing nested data structures can be tricky. This README shares multiple ways t
 ## Overview
 
 1. [Nested data structure](#nested-data-structure)
-1. [String of getters](#string-of-getters)
+1. [Chain of getters](#chain-of-getters)
 1. [Concatenated null checks](#concatenated-null-checks)
 1. [Optional](#optional)
 1. [StatementHandler](#statementhandler)
 1. [Nested null checks](#nested-null-checks)
-1. [Flattened null checks](#flattened-null-checks)
+1. [Flattened null checks](#flattened-null-checks) (Preferred method)
 
 ## Nested Data Structure
 
@@ -35,9 +35,9 @@ class LevelFour {
 }
 ``` 
 
-## String Of Getters
+## Chain Of Getters
 
-While `levelFourName` can be retrieved using a string of getters, this is an extremely bad way because __NullPointerException__ is thrown when one of the objects is null.
+While `levelFourName` can be retrieved using a chain of getters, this is an extremely bad way because __NullPointerException__ is thrown when one of the objects is null.
 
 ```java
 public String getName(LevelOne levelOne) {
@@ -74,7 +74,7 @@ public String getName(LevelOne levelOne) {
 
 ## Concatenated Null Checks
 
-In this method, we concatenate a list of null checks using `&&` condition. If the list of conditions is true, then it would be safe to get `levelFourName` using a string of getters.
+In this method, we concatenate a list of null checks using `&&` condition. If the list of conditions is true, then it would be safe to get `levelFourName` using a chain of getters.
 
 ```java
 public String getName(LevelOne levelOne) {
@@ -98,7 +98,7 @@ public String getName(LevelOne levelOne) {
 }
 ```
 
-So far, we've only been able to retrieve a single field `levelFourName`. To retrieve multiple fields (e.g. `levelTwoName` and `levelFourName`), we will need to use multiple string of getters.
+So far, we've only been able to retrieve a single field `levelFourName`. To retrieve multiple fields (e.g. `levelTwoName` and `levelFourName`), we will need to use multiple chain of getters.
 
 ```java
 public List<String> getNames(LevelOne levelOne) {
@@ -134,7 +134,7 @@ This method is inefficient considering that we are calling getters on same objec
 
 ## Optional
 
-The [Optional](https://www.baeldung.com/java-optional) class was introduced in Java 8. While this method follows proper coding convention, it can be difficult to write and understand.
+The [Optional](https://www.baeldung.com/java-optional) class was introduced in Java 8. While this method follows proper coding convention, it can be difficult to write and debug. I.e. when to use `map`, `filter`, `stream`, `get`, `orElse`, etc...? Plus, the behaviour and return type of each method is not immediately obvious.
 
 ```java
 public getNames(LevelOne levelOne) {
@@ -152,7 +152,64 @@ public getNames(LevelOne levelOne) {
 
 ## StatementHandler
 
-TODO 
+First, we will need to implement the `StatementHandler` and `StaticStatementHandler` classes. We can put them in a `util` package as a common utility class:
+
+```java
+package com.example.common.util;
+
+/**
+ * This class contains several closures for wrapping chained method calls. The closure can
+ * execute either an optional call chain. If an optional call chain fails with an NPE, a null will be returned.
+ */
+@Component
+public class StatementHandler {
+
+  public <T> T optional(Supplier<T> statement) {
+    return StaticStatementHandler.optional(statement);
+  }
+
+}
+
+public final class StaticStatementHandler {
+
+  public static <T> T optional(Supplier<T> statement) {
+    try {
+      return statement.get();
+    } catch (Exception exc) {
+      return null;
+    }
+  }
+}
+```
+
+Then, we can make use of `StatementHandler.optional()` to parse our nested object:
+
+```java
+package com.example.levelone;
+
+import com.example.common.util.StatementHandler;
+
+public class LevelOneController {
+
+  @Autowired
+  StatementHandler statementHandler;
+
+  public String getName(LevelOne levelOne) {
+    return statementHandler.optional(() -> 
+      levelOne
+        .getLevelTwo()
+        .getLevelThreeList()
+        .get(0)
+        .getLevelFourMap()
+        .get("key")
+        .getLevelFourName();
+    );
+  }
+
+}
+```
+
+This method basically abstracts the `try and catch exception` block into the `StaticStatementHandler` class so that it is safe to use the chain of getters method.
 
 ## Nested Null Checks
 
