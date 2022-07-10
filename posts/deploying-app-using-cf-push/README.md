@@ -5,8 +5,8 @@
 
 1. Build the JAR
 1. Update `manifest-local.yml`
-1. cf api login
-1. `cf push` your application
+1. `cf login`
+1. `cf push`
 
 ## Build the Jar
 
@@ -65,7 +65,7 @@ applications:
     - java_buildpack
 ```
 
-## cf api login
+## `cf login`
 
 Update your cf api and login:
 
@@ -90,7 +90,7 @@ Org:            example-org
 Space:          development
 ```
 
-## `cf push` your application
+## `cf push`
 
 Run this command in the `manifest` folder:
 
