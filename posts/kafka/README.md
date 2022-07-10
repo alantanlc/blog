@@ -1,5 +1,5 @@
 
-# Kafka Consumers and Producers
+# Kafka
 
 ## Overview
 
@@ -9,6 +9,7 @@
 1. Consumer
 1. Producer
 1. Profile Segregation
+1. Replication 
 
 ## Key Concepts
 
@@ -65,3 +66,20 @@ TODO
 ## Producer
 
 TODO
+
+## Replication
+
+1. The unit of replication is the topic partition. Under non-failure conditions, each partition has a single leader and zero or more followers.
+1. Total number of replicas including the leader constitutes to the replication factor.
+1. All writes go to the leader and reads can go to the leader or the followers of the partition.
+
+
+### Kafka Node Liveness
+
+Kafka node liveness has two conditions:
+
+1. Node must be able to maintain its session with Zookeeper (via Zookeeper's heartbeat mechanism)
+1. As a follower, it must replicate the writes happening on the leader and not fall too far behind
+
+If a follower dies, gets stucks, or falls behind, the leader will remove the follower from the list of in sync replicas.
+
