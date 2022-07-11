@@ -89,6 +89,13 @@ config-service
 |_ pom.xml
 ```
 
+application.yaml
+
+```yaml
+server:
+    port: 8888
+```
+
 Add the `@EnableConfigServer` annotation in your main application class:
 
 ```java
@@ -126,7 +133,7 @@ http://localhost:8888/my-app/uat
 http://localhost:8888/my-app/prod
 ```
 
-Then in our `my-app` application, we simply specify the cloud config uri in `resources/application.yaml`:
+Then in our `my-app` application, we simply specify the spring cloud config uri in `resources/application.yaml`:
 
 ```
 my-app
