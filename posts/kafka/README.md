@@ -10,6 +10,7 @@
 1. Producer
 1. Profile Segregation
 1. Replication 
+1. Multi-threaded Processing
 
 ## Key Concepts
 
@@ -83,3 +84,46 @@ Kafka node liveness has two conditions:
 
 If a follower dies, gets stucks, or falls behind, the leader will remove the follower from the list of in sync replicas.
 
+## Multi-Threaded Processing
+
+1. One Consumer Per Thread
+1. Decouple Consumption and Processing
+
+### Decouple Consumption and Processing
+
+Have one or more `consumer threads` that do all data consumption and hands off records to a pool of `processor thread` that actually handle the record processing.
+
+```java
+public class Consumer {
+
+    MessageProcessor messageProcessor;
+
+    public void consume() {
+        try {
+            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(Long.MAX_VALUE));
+            for (TopicPartitiion partition: records.partitions()) {
+                List<ConsumerRecord<String, String>> partitionRecords = records.records(partition);
+                for (ConsumerRecord<String, String> record: partitionRecords) {
+                    System.out.println(record.offset() + ": " + record.value());
+
+                    // Pass record value to messageProcessor
+                    messageProcessor.process(record.value()));
+                }
+                long lastOffset = partitionRecords.get(partitionRecords.size() - 1).offset();
+                consumer.cimmitSync(Collections.singletonMap(partition, new OffsetAndMetadata(lastOffset + 1)));
+            }
+        } finally {
+            cosumer.close();
+        }
+
+    }
+}
+
+public class MessageProcessor {
+
+    @Async
+    public void process(String record) {
+        // Process record in a separate processor thread...
+    }
+}
+```
