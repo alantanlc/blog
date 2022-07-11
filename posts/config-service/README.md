@@ -5,6 +5,7 @@
 1. Service without config service
 1. Service with config service
 1. Pros and Cons
+1. References
 
 ## Service without config service
 
@@ -72,6 +73,8 @@ config-service
 |_ src
     |_ main
         |_ java
+            |_ demo
+                |_ ConfigServerApplication.yaml
         |_ resources
             |_ application.yaml
             |_ dev
@@ -84,6 +87,22 @@ config-service
                 |_ my-app.yaml
 |_ test
 |_ pom.xml
+```
+
+Add the `@EnableConfigServer` annotation in your main application class:
+
+```java
+package demo;
+
+import org.springframework.cloud.config.server.EnableConfigServer;
+
+@EnableConfigServer
+public class ConfigServerApplication {
+
+    public static void main(String args[]) {
+        SpringApplication.run(ConfigServerApplication.class, args);
+    }
+}
 ```
 
 Run the config service app:
@@ -141,4 +160,6 @@ Pros of using a config service:
 1. No need to build and deploy service application due to config change. Make changes in config service repository and redeploy config service
 1. Build, deploy and app start up time of a config service is usually much faster than a service application
 
- 
+## References
+
+https://spring.io/projects/spring-cloud-config#overview
