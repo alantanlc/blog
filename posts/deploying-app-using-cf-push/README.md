@@ -31,11 +31,11 @@ You should find the JAR file in the `target` folder.
 
 ```
 my-app
-    |_ manifest
-    |_ src
-    |_ target
-        |_ my-app-1.0.0-SNAPSHOT.jar
-    |_ pom.xml
+|_ manifest
+|_ src
+|_ target
+    |_ my-app-1.0.0-SNAPSHOT.jar
+|_ pom.xml
 ```
 
 ## Update `manifest-local-yml`
@@ -44,12 +44,12 @@ The `manifest-local.yaml` is usually placed in the `manifest` folder.
 
 ```
 my-app
-    |_ manifest
-        |_ manifest-jules.yml
-        |_ manifest-local.yml
-    |_ src
-    |_ target
-    |_ pom.xml
+|_ manifest
+    |_ manifest-jules.yml
+    |_ manifest-local.yml
+|_ src
+|_ target
+|_ pom.xml
 ```
 
 Update the `path` value to the location of your JAR file.
