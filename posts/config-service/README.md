@@ -92,6 +92,10 @@ config-service
 application.yaml
 
 ```yaml
+spring:
+    application:
+        name: configserver
+
 server:
     port: 8888
 ```
