@@ -3,14 +3,14 @@
 
 ## Overview
 
-1. Key Concepts
-1. Topic Creation 
-1. Kafka Connection
-1. Consumer
-1. Producer
-1. Profile Segregation
-1. Replication 
-1. Multi-threaded Processing
+1. [Key Concepts](#key-concepts)
+1. [Topic Creation](#topic-creation)
+1. [Kafka Connection](#kafka-connection)
+1. [Consumer](#consumer)
+1. [Producer](#producer)
+1. [Replication](#replication)
+1. [Multi-threaded Processing](#multi-threaded-processing)
+1. [Profile Segregation](#profile-segregation)
 
 ## Key Concepts
 
@@ -19,8 +19,6 @@
 1. Partition and Offset  
 
 ### Cluster
-
-
 
 Sample values:
 
@@ -58,9 +56,11 @@ apigateway-payment-sg-response-prod
 
 TODO
 
-## 
+## Consumer
 
-## Consumer Listener
+TODO
+
+### Consumer Group
 
 TODO
 
@@ -73,7 +73,6 @@ TODO
 1. The unit of replication is the topic partition. Under non-failure conditions, each partition has a single leader and zero or more followers.
 1. Total number of replicas including the leader constitutes to the replication factor.
 1. All writes go to the leader and reads can go to the leader or the followers of the partition.
-
 
 ### Kafka Node Liveness
 
@@ -136,3 +135,7 @@ __Cons:__
 
 1. Guaranteeing order across the processors requires particular care as threads will execute independently, an earlier chunk of data may actually be processed after a later chunk of data just due to the luck of thread execution timing. For processing that has no ordering requirements, this is not a problem.
 1. Manully committing the position becomes harder as it requires that all threads co-ordinate to ensure that processing is complete for that partition.
+
+## Profile Segregation
+
+TODO
