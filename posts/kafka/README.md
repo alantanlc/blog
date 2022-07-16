@@ -5,7 +5,7 @@
 
 1. [Key Concepts](#key-concepts)
 1. [Topic Creation](#topic-creation)
-1. [Kafka Connection](#kafka-connection)
+1. [Message Delivery Semantics](#message-delivery-semantics)
 1. [Consumer](#consumer)
 1. [Producer](#producer)
 1. [Replication](#replication)
@@ -53,6 +53,10 @@ apigateway-payment-sg-response-prod
 ```
 
 ### Partition And Offset
+
+TODO
+
+### Message Delivery Semantics
 
 TODO
 
@@ -118,6 +122,14 @@ Connection to the cluster is bootstrapped by specifying a list of one or more br
 
 ### Manual Offset Control
 
+Useful when consumption of message is coupled with some processing logic and hence a message should not be considered as consumed until it is completed processing.
+
+Consume a batch of records and batch them up in memory. Once enough records batched, insert them into a database.
+
+Manually commit the offsets only after records have been inserted into the database. This gives exact control of when a record is considered consumed.
+
+However, the consumer process could fail in the short interval (a few milliseconds) after the insert into database but before the commit. In this case, the batch of records would be consumed again by the next process that takes over the partitions.
+
 ```java
 Properties props = new Properties();
 props.setProperty("bootstrap.servers", "localhost:9092"); // kafka broker
@@ -139,6 +151,24 @@ while (true) {
         consumer.commitSync();
         buffer.clear();
     }
+}
+```
+
+```java
+try {
+    while (running) {
+        ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(Long.MAX_VALUE));
+        for (TopicPartition partition : records.partitions()) {
+            List<ConsumerRecord<String, String>> partitionRecords = records.record(partition);
+            for (ConsumerRecord<String, String> record : partitionRecords) {
+                System.out.println(record.offset() + ": " + record.value());
+            }
+            long lastOffset = partitionRecords.get(partitionRecords.size() - 1).offset();
+            consumer.commitSync(Collections.singletonMap(partition, new OffsetAndMetadata(lastOffset + 1)));
+        }
+    }
+} finally {
+    consumer.close();
 }
 ```
 
