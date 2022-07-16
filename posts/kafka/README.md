@@ -70,6 +70,7 @@ Summary:
 
 Topics:
 
+1. Consumer Api
 1. Consumer Groups and Topic Subscriptions
 1. Detecting Consumer Failures
 1. Automatic Offset Committing
@@ -81,6 +82,35 @@ Topics:
 1. Reading Transactional Messages
 1. Multi-threaded Processing
 
+### Consumer Api
+
+```xml
+
+```
+
+### Automatic Offset Committing
+
+Simple usage of Kafka's consumer api that relies on automatic offset committing.
+
+```java
+Properties props = new Properties();
+props.setProperty("bootstrap.servers", "localhost:9092"); // kafka broker
+props.setProperty("group.id", "test"); // consumer group id
+props.setProperty("enable.auto.commit", "true");
+props.setProperty("auto.commit.interval.ms", "1000"); // offsets are committed automatically at 1000 ms intervals
+props.setProperty("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer"); // deserialize record key as simple strings
+props.setProperty("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer"); // deserialize record value as simple strings
+KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
+consumer.subscribe(Arrays.asList("foo", "bar")); // topics
+while (true) {
+    ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
+    for (ConsumerRecord<String, String> record : records) {
+        System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
+    }
+}
+```
+
+Connection to the cluster is bootstrapped by specifying a list of one or more brokers to contact using the configuration `bootstrap.servers`. This list if just used to discover the rest of the brokers in the cluster and need not be an exhaustive list of servers in the cluster (though you may want to specify more than one in case there are servers down when the client is connecting).
 
 ### Consumer Group
 
