@@ -58,7 +58,29 @@ TODO
 
 ## Consumer
 
-TODO
+Doc: [https://kafka.apache.org/32/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html#consumergroups](https://kafka.apache.org/32/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html#consumergroups)
+
+Summary:
+
+1. A client that consumes records from a Kafka cluster.
+1. Client transparently handles the failure of Kafka brokers, and transparently adapts as topic partitions it fetches mirgrate within the cluster.
+1. Interacts with broker to allow groups of consumers to load balance consumption using consumer groups.
+1. Consumer maintains TCP connections to brokers to fetch data. Failure to close the consumer after use will leak these connections.
+1. Consumer is not thread-safe.
+
+Topics:
+
+1. Consumer Groups and Topic Subscriptions
+1. Detecting Consumer Failures
+1. Automatic Offset Committing
+1. Manual Offset Control
+1. Manual Partition Assignment
+1. Storing Offsets Outside Kafka
+1. Controlling The Consumer's Position
+1. Consumption Flow Control
+1. Reading Transactional Messages
+1. Multi-threaded Processing
+
 
 ### Consumer Group
 
@@ -90,7 +112,7 @@ If a follower dies, gets stucks, or falls behind, the leader will remove the fol
 
 ### Decouple Consumption and Processing
 
-Have one or more `consumer threads` that do all data consumption and hands off records to a pool of `processor thread` that actually handle the record processing.
+Have one or more `consumer threads` that do all data consumption and hand off records to a pool of `processor thread` that actually handle the record processing.
 
 ```java
 public class Consumer {
