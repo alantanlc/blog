@@ -85,7 +85,11 @@ Topics:
 ### Consumer Api
 
 ```xml
-
+<dependency>
+    <groupId>org.apache.kafka</groupId>
+    <artifactId>kafka-clients</artifactId>
+    <version>3.1.1-SNAPSHOT</version>
+</dependency>
 ```
 
 ### Automatic Offset Committing
@@ -111,6 +115,32 @@ while (true) {
 ```
 
 Connection to the cluster is bootstrapped by specifying a list of one or more brokers to contact using the configuration `bootstrap.servers`. This list if just used to discover the rest of the brokers in the cluster and need not be an exhaustive list of servers in the cluster (though you may want to specify more than one in case there are servers down when the client is connecting).
+
+### Manual Offset Control
+
+```java
+Properties props = new Properties();
+props.setProperty("bootstrap.servers", "localhost:9092"); // kafka broker
+props.setProperty("group.id", "test"); // consumer group id
+props.setProperty("enable.auto.commit", "false"); // auto commit is disabled
+props.setProperty("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer"); // deserialize record key as simple strings
+props.setProperty("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer"); // deserialize record value as simple strings
+KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
+consumer.subscribe(Arrays.asList("foo", "bar")); // topics
+final int minBatchSize = 200;
+List<ConsumerRecords<String, String>> buffer = new ArrayList<>();
+while (true) {
+    ConsumerRecords<String, String> records = consumer.poll(Durations.ofMillis(100));
+    for (ConsumerRecord<String, String> record : records) {
+        buffer.add(record);
+    }
+    if (buffer.size() >= minBatchSize) {
+        insertIntoDb(buffer);
+        consumer.commitSync();
+        buffer.clear();
+    }
+}
+```
 
 ### Consumer Group
 
